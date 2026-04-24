@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsercenterClient interface {
 	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 	CreateNewUser(ctx context.Context, in *CreateNewUserReq, opts ...grpc.CallOption) (*CommonResp, error)
+	RedisTest(ctx context.Context, in *RedisTestReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type usercenterClient struct {
@@ -52,12 +53,22 @@ func (c *usercenterClient) CreateNewUser(ctx context.Context, in *CreateNewUserR
 	return out, nil
 }
 
+func (c *usercenterClient) RedisTest(ctx context.Context, in *RedisTestReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.usercenter/RedisTest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsercenterServer is the server API for Usercenter service.
 // All implementations must embed UnimplementedUsercenterServer
 // for forward compatibility
 type UsercenterServer interface {
 	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error)
 	CreateNewUser(context.Context, *CreateNewUserReq) (*CommonResp, error)
+	RedisTest(context.Context, *RedisTestReq) (*CommonResp, error)
 	mustEmbedUnimplementedUsercenterServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedUsercenterServer) GetUserInfo(context.Context, *GetUserInfoRe
 }
 func (UnimplementedUsercenterServer) CreateNewUser(context.Context, *CreateNewUserReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNewUser not implemented")
+}
+func (UnimplementedUsercenterServer) RedisTest(context.Context, *RedisTestReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RedisTest not implemented")
 }
 func (UnimplementedUsercenterServer) mustEmbedUnimplementedUsercenterServer() {}
 
@@ -120,6 +134,24 @@ func _Usercenter_CreateNewUser_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Usercenter_RedisTest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RedisTestReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsercenterServer).RedisTest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.usercenter/RedisTest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsercenterServer).RedisTest(ctx, req.(*RedisTestReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Usercenter_ServiceDesc is the grpc.ServiceDesc for Usercenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var Usercenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateNewUser",
 			Handler:    _Usercenter_CreateNewUser_Handler,
+		},
+		{
+			MethodName: "RedisTest",
+			Handler:    _Usercenter_RedisTest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

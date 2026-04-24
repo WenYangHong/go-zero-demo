@@ -32,3 +32,8 @@ func (s *UsercenterServer) CreateNewUser(ctx context.Context, in *pb.CreateNewUs
 	l := logic.NewCreateNewUserLogic(ctx, s.svcCtx)
 	return l.CreateNewUser(in)
 }
+
+func (s *UsercenterServer) RedisTest(ctx context.Context, in *pb.RedisTestReq) (*pb.CommonResp, error) {
+	l := logic.NewRedisTestLogic(ctx, s.svcCtx)
+	return l.RedisTest(in)
+}

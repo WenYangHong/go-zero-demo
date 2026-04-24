@@ -23,8 +23,12 @@ message CommonResp {
   string message = 2;
 }
 
+message RedisTestReq {
+}
+
 //service
 service usercenter{
   rpc GetUserInfo(GetUserInfoReq) returns (GetUserInfoResp);
   rpc CreateNewUser(CreateNewUserReq) returns (CommonResp);
+  rpc RedisTest(RedisTestReq) returns (CommonResp);
 }

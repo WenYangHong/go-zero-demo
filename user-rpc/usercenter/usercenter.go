@@ -18,10 +18,12 @@ type (
 	CreateNewUserReq = pb.CreateNewUserReq
 	GetUserInfoReq   = pb.GetUserInfoReq
 	GetUserInfoResp  = pb.GetUserInfoResp
+	RedisTestReq     = pb.RedisTestReq
 
 	Usercenter interface {
 		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 		CreateNewUser(ctx context.Context, in *CreateNewUserReq, opts ...grpc.CallOption) (*CommonResp, error)
+		RedisTest(ctx context.Context, in *RedisTestReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultUsercenter struct {
@@ -43,4 +45,9 @@ func (m *defaultUsercenter) GetUserInfo(ctx context.Context, in *GetUserInfoReq,
 func (m *defaultUsercenter) CreateNewUser(ctx context.Context, in *CreateNewUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewUsercenterClient(m.cli.Conn())
 	return client.CreateNewUser(ctx, in, opts...)
+}
+
+func (m *defaultUsercenter) RedisTest(ctx context.Context, in *RedisTestReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.RedisTest(ctx, in, opts...)
 }
