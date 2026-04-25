@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-
+	"fmt"
 	"go-zero-demo/user-rpc/internal/svc"
 	"go-zero-demo/user-rpc/pb"
 
@@ -25,19 +25,24 @@ func NewRedisTestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RedisTe
 
 func (l *RedisTestLogic) RedisTest(in *pb.RedisTestReq) (*pb.CommonResp, error) {
 	// todo: add your logic here and delete this line
-	l.svcCtx.Redis.Setex("session:abc123", "userId:42", 3600)
-
 	// 读取
-	val, err := l.svcCtx.Redis.Get("session:abc123")
+	rdb := l.svcCtx.Redis
+	add, _ := rdb.Zadd("leaderboard", 1500, "player:alice")
+	_, _ = rdb.Zadd("leaderboard2", 1480, "player:alice")
+	_, _ = rdb.Zadd("leaderboard3", 1440, "player:alice")
+	err := rdb.Setex("session:abc123", "userId:42", 3600)
 
+	fmt.Println("redis_test_add_key", add)
+	// 临界区
 	if err != nil {
 		return &pb.CommonResp{
 			Code:    200,
 			Message: "缓存没了",
 		}, nil
 	}
+
 	return &pb.CommonResp{
 		Code:    200,
-		Message: val,
+		Message: "成功",
 	}, nil
 }
