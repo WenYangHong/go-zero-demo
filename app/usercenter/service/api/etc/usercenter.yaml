@@ -1,0 +1,12 @@
+Name: usercenter
+Host: 0.0.0.0
+Port: 8888
+
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+  AccessExpire: 86400        # Access Token 有效期：24 小时
+
+
+UserCenterRpcConf:
+  Endpoints:
+    - 127.0.0.1:8080
