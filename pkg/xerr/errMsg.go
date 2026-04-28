@@ -11,7 +11,11 @@ func init() {
 	message[TOKEN_GENERATE_ERROR] = "生成token失败"
 	message[DB_ERROR] = "数据库繁忙,请稍后再试"
 	message[DB_UPDATE_AFFECTED_ZERO_ERROR] = "更新数据影响行数为0"
-	message[REQISTER_USER_EXIST_ERROR] = "注册用户失败，当前注册手机号已使用"
+	message[REQISTER_USER_EXIST_ERROR] = "该手机号已注册"
+	message[REGISTER_USER_ERROR] = "账号注册失败"
+	message[LOGIN_USER_NOT_FOUND_ERROR] = "账号不存在"
+	message[LOGIN_PASSWORD_ERROR] = "密码错误"
+	message[LOGIN_ERROR] = "账号登录失败"
 }
 
 func MapErrMsg(errcode uint32) string {

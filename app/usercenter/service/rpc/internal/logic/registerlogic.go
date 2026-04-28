@@ -38,7 +38,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "mobile:%s,err:%v", in.Mobile, err)
 	}
 	if user != nil {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.REQISTER_USER_EXIST_ERROR), "Register user exists mobile:%s,err:%v", in.Mobile, err)
+		return nil, errors.WithMessage(xerr.NewErrCode(xerr.REQISTER_USER_EXIST_ERROR), xerr.MapErrMsg(xerr.REQISTER_USER_EXIST_ERROR))
 	}
 	var userId int64
 	// 开始新增

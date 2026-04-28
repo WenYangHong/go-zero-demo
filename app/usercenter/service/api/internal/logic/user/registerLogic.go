@@ -31,11 +31,15 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		Password: req.Password,
 	})
 	if err != nil {
-		return nil, xerr.CommonError()
+		return nil, xerr.FromRpcError(err, xerr.REGISTER_USER_ERROR, map[uint32]uint32{
+			xerr.REQISTER_USER_EXIST_ERROR: xerr.REQISTER_USER_EXIST_ERROR,
+		})
 	}
 	return &types.RegisterResp{
 		AccessToken:  register.AccessToken,
 		AccessExpire: register.AccessExpire,
 		RefreshAfter: register.RefreshAfter,
+		Code:         int64(xerr.OK),
+		Msg:          "success",
 	}, nil
 }

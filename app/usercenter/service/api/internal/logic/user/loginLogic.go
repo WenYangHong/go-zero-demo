@@ -32,14 +32,17 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		AuthKey:  req.Mobile,
 		Password: req.Password,
 	})
-	// 如果登录失败的话，现在直接返回错误，应该根据code码对错误类型进行归纳
-
 	if err != nil {
-		return nil, xerr.CommonError()
+		return nil, xerr.FromRpcError(err, xerr.LOGIN_ERROR, map[uint32]uint32{
+			xerr.LOGIN_USER_NOT_FOUND_ERROR: xerr.LOGIN_USER_NOT_FOUND_ERROR,
+			xerr.LOGIN_PASSWORD_ERROR:       xerr.LOGIN_PASSWORD_ERROR,
+		})
 	}
 	return &types.LoginResp{
 		AccessToken:  loginResp.AccessToken,
 		AccessExpire: loginResp.AccessExpire,
 		RefreshAfter: loginResp.RefreshAfter,
+		Code:         int64(xerr.OK),
+		Msg:          "success",
 	}, err
 }

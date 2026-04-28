@@ -2,6 +2,9 @@ package user
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"go-zero-mall/app/usercenter/service/rpc/pb"
+	"go-zero-mall/pkg/ctxdata"
 
 	"go-zero-mall/app/usercenter/service/api/internal/svc"
 	"go-zero-mall/app/usercenter/service/api/internal/types"
@@ -25,7 +28,20 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 }
 
 func (l *DetailLogic) Detail(req *types.UserInfoReq) (resp *types.UserInfoResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := ctxdata.GetUidFromCtx(l.ctx)
 
-	return
+	user, err := l.svcCtx.UserCenterRpc.GetUserInfo(l.ctx, &pb.GetUserInfoReq{
+		Id: userId,
+	})
+
+	if user == nil {
+		return nil, err
+	}
+
+	var respUser types.User
+	_ = copier.Copy(&respUser, user.User)
+
+	return &types.UserInfoResp{
+		UserInfo: respUser,
+	}, nil
 }

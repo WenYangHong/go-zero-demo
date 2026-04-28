@@ -8,35 +8,39 @@ info(
 )
 
 type User {
-    Id       int64  `json:"id"`
-    Mobile   string `json:"mobile"`
+    Id int64 `json:"id"`
+    Mobile string `json:"mobile"`
     Nickname string `json:"nickname"`
-    Sex      int64  `json:"sex"`
-    Avatar   string `json:"avatar"`
-    Info     string `json:"info"`
+    Sex int64 `json:"sex"`
+    Avatar string `json:"avatar"`
+    Info string `json:"info"`
 }
 
 type (
     RegisterReq {
-        Mobile   string `json:"mobile" validate:"required"`
+        Mobile string `json:"mobile" validate:"required"`
         Password string `json:"password" validate:"required,len=6"`
     }
     RegisterResp {
-        AccessToken  string `json:"accessToken"`
-        AccessExpire int64  `json:"accessExpire"`
-        RefreshAfter int64  `json:"refreshAfter"`
+        AccessToken string `json:"accessToken"`
+        AccessExpire int64 `json:"accessExpire"`
+        RefreshAfter int64 `json:"refreshAfter"`
+        Code int64 `json:"code"`
+        Msg string `json:"msg"`
     }
 )
 
 type (
     LoginReq {
-        Mobile   string `json:"mobile"  validate:"required"`
+        Mobile string `json:"mobile"  validate:"required"`
         Password string `json:"password"  validate:"required,len=6"`
     }
     LoginResp {
-        AccessToken  string `json:"accessToken"`
-        AccessExpire int64  `json:"accessExpire"`
-        RefreshAfter int64  `json:"refreshAfter"`
+        AccessToken string `json:"accessToken"`
+        AccessExpire int64 `json:"accessExpire"`
+        RefreshAfter int64 `json:"refreshAfter"`
+        Code int64 `json:"code"`
+        Msg string `json:"msg"`
     }
 )
 

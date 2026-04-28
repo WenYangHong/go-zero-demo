@@ -9,6 +9,7 @@ import (
 	"go-zero-mall/app/usercenter/service/rpc/pb"
 	"go-zero-mall/app/usercenter/service/rpc/usercenter"
 	"go-zero-mall/pkg/tool"
+	"go-zero-mall/pkg/xerr"
 )
 
 type LoginLogic struct {
@@ -28,15 +29,18 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 这里不做多方式登录的判断了，直接根据手机号进行登录
 	user, err := l.svcCtx.UserModel.FindOneByMobile(l.ctx, in.AuthKey)
-	if err != nil || errors.Is(err, model.ErrNotFound) {
-		return nil, err
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, errors.WithMessage(xerr.NewErrCode(xerr.LOGIN_USER_NOT_FOUND_ERROR), xerr.MapErrMsg(xerr.LOGIN_USER_NOT_FOUND_ERROR))
+		}
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "login FindOneByMobile authKey:%s, err:%v", in.AuthKey, err)
 	}
 	if user == nil {
-		return nil, err
+		return nil, errors.WithMessage(xerr.NewErrCode(xerr.LOGIN_USER_NOT_FOUND_ERROR), xerr.MapErrMsg(xerr.LOGIN_USER_NOT_FOUND_ERROR))
 	}
 	// 再根据密码进行判断
 	if tool.Md5ByString(in.Password) != user.Password {
-		return nil, errors.New("密码错误")
+		return nil, errors.WithMessage(xerr.NewErrCode(xerr.LOGIN_PASSWORD_ERROR), xerr.MapErrMsg(xerr.LOGIN_PASSWORD_ERROR))
 	}
 	// 获取jwt token
 	generate := NewGenerateTokenLogic(l.ctx, l.svcCtx)
@@ -44,7 +48,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		UserId: user.Id,
 	})
 	if err != nil {
-		return nil, errors.New("登录失败")
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.LOGIN_ERROR), "generate token failed userId:%d, err:%v", user.Id, err)
 	}
 	return &usercenter.LoginResp{
 		AccessToken:  token.AccessToken,
