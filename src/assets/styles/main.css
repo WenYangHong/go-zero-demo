@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #059669;
+  --color-primary-container: #D1FAE5;
+  --color-on-primary: #ffffff;
+  --color-background: #FAF9F7;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface: #FAF9F7;
+  --color-surface-container: #F3F4F2;
+  --color-surface-container-high: #E8E9E7;
+  --color-surface-container-highest: #D1D3D1;
+  --color-on-surface: #1F2937;
+  --color-on-surface-variant: #6B7280;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-outline: #D1D5DB;
+  --color-outline-variant: #E5E7EB;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-dialog: 0 25px 50px rgba(0, 0, 0, 0.12);
+  --font-sans: "Nunito", "Noto Sans SC", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: var(--font-sans);
+}
+
+:root {
+  --el-color-primary: #059669;
+  --el-color-primary-light-3: #34d399;
+  --el-color-primary-light-5: #6ee7b7;
+  --el-color-primary-light-7: #a7f3d0;
+  --el-color-primary-light-8: #d1fae5;
+  --el-color-primary-light-9: #ecfdf5;
+  --el-color-primary-dark-2: #047857;
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--el-color-primary);
+  --el-button-border-color: var(--el-color-primary);
+  --el-button-hover-bg-color: var(--el-color-primary-light-3);
+  --el-button-hover-border-color: var(--el-color-primary-light-3);
+  --el-button-active-bg-color: var(--el-color-primary-dark-2);
+  --el-button-active-border-color: var(--el-color-primary-dark-2);
+}
