@@ -1,0 +1,37 @@
+syntax = "v1"
+
+info (
+	title:   "旅游服务"
+	desc:    "旅游服务"
+	author:  "hwy"
+	email:   "13858126467@163.com"
+	version: "v1"
+)
+
+import (
+	"homestay/homestay.api"
+)
+
+// 民宿信息
+@server (
+	prefix: travel/v1
+	group:  homestay
+)
+service travel {
+	@doc "homestay room list"
+	@handler homestayList
+	post /homestay/homestayList (HomestayListReq) returns (HomestayListResp)
+
+	@doc "boss all homestay room"
+	@handler businessList
+	post /homestay/businessList (BusinessListReq) returns (BusinessListResp)
+
+	@doc "guess homestay room"
+	@handler guessList
+	post /homestay/guessList (GuessListReq) returns (GuessListResp)
+
+	@doc "homestay room detail"
+	@handler homestayDetail
+	post /homestay/homestayDetail (HomestayDetailReq) returns (HomestayDetailResp)
+}
+

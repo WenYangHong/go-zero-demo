@@ -3,13 +3,12 @@ package user
 import (
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
+	"github.com/zeromicro/go-zero/rest/httpx"
 	"go-zero-mall/app/usercenter/service/api/internal/logic/user"
 	"go-zero-mall/app/usercenter/service/api/internal/svc"
 	"go-zero-mall/app/usercenter/service/api/internal/types"
 	"go-zero-mall/pkg/xerr"
-
-	"github.com/go-playground/validator/v10"
-	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 var validate = validator.New()

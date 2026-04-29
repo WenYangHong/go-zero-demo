@@ -4,16 +4,14 @@
 package types
 
 type LoginReq struct {
-	Mobile   string `json:"mobile"  validate:"required"`
-	Password string `json:"password"  validate:"required,len=6"`
+	Mobile   string `json:"mobile"`
+	Password string `json:"password"`
 }
 
 type LoginResp struct {
 	AccessToken  string `json:"accessToken"`
 	AccessExpire int64  `json:"accessExpire"`
 	RefreshAfter int64  `json:"refreshAfter"`
-	Code         int64  `json:"code"`
-	Msg          string `json:"msg"`
 }
 
 type RegisterReq struct {
@@ -25,8 +23,6 @@ type RegisterResp struct {
 	AccessToken  string `json:"accessToken"`
 	AccessExpire int64  `json:"accessExpire"`
 	RefreshAfter int64  `json:"refreshAfter"`
-	Code         int64  `json:"code"`
-	Msg          string `json:"msg"`
 }
 
 type User struct {
