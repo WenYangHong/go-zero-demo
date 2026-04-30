@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
+	"regexp"
+	"strconv"
 )
 
 type ErrorResponse struct {
@@ -16,6 +18,8 @@ type CodeError struct {
 	errCode uint32
 	errMsg  string
 }
+
+var codeErrRegexp = regexp.MustCompile(`ErrCode:(\d+)`)
 
 func (e *CodeError) GetErrCode() uint32 {
 	return e.errCode
@@ -51,6 +55,38 @@ func CommonErrorHandler(w http.ResponseWriter, r *http.Request, err error) {
 
 func CommonError() error {
 	return NewErrCode(SERVER_COMMON_ERROR)
+}
+
+func ParseCodeErr(err error) *CodeError {
+	if err == nil {
+		return nil
+	}
+
+	if codeErr, ok := err.(*CodeError); ok {
+		return codeErr
+	}
+
+	matches := codeErrRegexp.FindStringSubmatch(err.Error())
+	if len(matches) != 2 {
+		return nil
+	}
+
+	errCode, parseErr := strconv.ParseUint(matches[1], 10, 32)
+	if parseErr != nil || !IsCodeErr(uint32(errCode)) {
+		return nil
+	}
+
+	return NewErrCode(uint32(errCode))
+}
+
+func FromRpcError(err error, defaultCode uint32, codeMapping map[uint32]uint32) error {
+	if codeErr := ParseCodeErr(err); codeErr != nil {
+		if mappedCode, ok := codeMapping[codeErr.GetErrCode()]; ok {
+			return NewErrCode(mappedCode)
+		}
+	}
+
+	return NewErrCode(defaultCode)
 }
 
 func HandleError(w http.ResponseWriter, r *http.Request, err error) {

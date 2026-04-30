@@ -1,0 +1,54 @@
+version: '3.8'
+
+networks:
+  dev-network:
+    driver: bridge
+
+services:
+  # Nginx 反向代理（根据 API 路径转发到 go_dev 容器中的服务）
+  nginx:
+    image: nginx:latest
+    container_name: nginx_gateway       # 避免与已有 nginx 容器冲突
+    restart: unless-stopped
+    ports:
+      - "80:80"                         # HTTP 入口
+      - "443:443"                       # HTTPS 入口（可选）
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d  # 挂载自定义配置目录
+    depends_on:
+      - go_dev
+    networks:
+      - dev-network
+
+  # Go 开发环境（go 1.23.11 + goctl 1.8.5）
+  go_dev:
+    image: golang:1.23.11
+    container_name: go_dev
+    restart: unless-stopped
+    # 暴露 API 服务端口（供 Nginx 转发和宿主机调试）
+    ports:
+      - "1001:1001"   # 用户服务 API
+      - "1002:1002"   # 订单服务 API
+      - "1003:1003"   # 商品服务 API
+      - "1004:1004"   # RPC 服务（可选）
+      - "1005:1005"   # RPC 服务（可选）
+      - "1006:1006"   # 预留端口
+    environment:
+      - GOPROXY=https://goproxy.cn,direct
+      - GO111MODULE=on
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # Linux 下允许访问宿主机服务
+    volumes:
+      - .:/app                     # 项目根目录挂载到 /app
+      - go_mod_cache:/go/pkg/mod   # 缓存 Go 模块
+    working_dir: /app
+    command: |
+      sh -c "
+        go install github.com/zeromicro/go-zero/tools/goctl@v1.8.5 &&
+        tail -f /dev/null
+      "
+    networks:
+      - dev-network
+
+volumes:
+  go_mod_cache:

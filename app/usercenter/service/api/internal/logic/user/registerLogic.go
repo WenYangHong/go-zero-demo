@@ -39,7 +39,5 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		AccessToken:  register.AccessToken,
 		AccessExpire: register.AccessExpire,
 		RefreshAfter: register.RefreshAfter,
-		Code:         int64(xerr.OK),
-		Msg:          "success",
 	}, nil
 }

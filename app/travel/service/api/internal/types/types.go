@@ -13,6 +13,11 @@ type BusinessListResp struct {
 	List []Homestay `json:"list"`
 }
 
+type CommonResp struct {
+	Code int64  `json:"code"`
+	Msg  string `json:"msg"`
+}
+
 type GuessListReq struct {
 }
 
@@ -46,10 +51,15 @@ type HomestayDetailResp struct {
 }
 
 type HomestayListReq struct {
-	Page     int64 `json:"page"`
-	PageSize int64 `json:"pageSize"`
+	Page                 int64  `json:"page"`
+	PageSize             int64  `json:"pageSize"`
+	SearchKey            string `json:"search_key,optional"`
+	PeopleNum            int64  `json:"people_num,optional"` // 注意首字母大写
+	HomestayCate         string `json:"homestay_cate,optional"`
+	HomestayActivityType string `json:"homestay_activity_type,optional"`
 }
 
 type HomestayListResp struct {
 	List []Homestay `json:"list"`
+	CommonResp
 }

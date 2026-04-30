@@ -107,3 +107,31 @@ CREATE TABLE `homestay_comment` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='民宿评价';
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+CREATE TABLE `category` (
+                            `id` int NOT NULL AUTO_INCREMENT COMMENT '分类ID',
+                            `name` varchar(32) NOT NULL DEFAULT '' COMMENT '分类名称，如山景民宿',
+                            `sort` int NOT NULL DEFAULT '0' COMMENT '排序（升序）',
+                            `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态 1:启用 0:禁用',
+                            `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            `delete_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            `del_state` tinyint NOT NULL DEFAULT '0',
+                            `version` bigint NOT NULL DEFAULT '0' COMMENT '版本号',
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `uk_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='民宿分类标签表';
+
+CREATE TABLE `homestay_category` (
+                                     `id` bigint NOT NULL AUTO_INCREMENT,
+                                     `homestay_id` bigint NOT NULL COMMENT '民宿ID，关联 homestay.id',
+                                     `category_id` int NOT NULL COMMENT '分类ID，关联 category.id',
+                                     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                     `delete_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                     `del_state` tinyint NOT NULL DEFAULT '0',
+                                     `version` bigint NOT NULL DEFAULT '0' COMMENT '版本号',
+                                     PRIMARY KEY (`id`),
+                                     UNIQUE KEY `uk_homestay_category` (`homestay_id`, `category_id`),
+                                     KEY `idx_category` (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='民宿分类关联表';

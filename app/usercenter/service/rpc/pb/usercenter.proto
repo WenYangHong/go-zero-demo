@@ -35,6 +35,8 @@ message RegisterResp {
   string accessToken = 1;
   int64  accessExpire = 2;
   int64  refreshAfter = 3;
+  int64 code = 4;
+  string msg = 5;
 }
 
 message LoginReq {
@@ -46,6 +48,8 @@ message LoginResp {
   string accessToken = 1;
   int64  accessExpire = 2;
   int64  refreshAfter = 3;
+  int64 code = 4;
+  string msg = 5;
 }
 
 message GetUserInfoReq {

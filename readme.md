@@ -11,5 +11,5 @@ goctl api go -api *.api -dir ../  -style=goZero
 ```goctl
 -- 在 deploy目录下执行 [使用本地模版声场model代码]
 goctl template init --home ./goctl/1.8.5
-goctl model mysql ddl -src="./sql/homestay.sql" -dir="../app/travel/service/model" --home="./goctl/1.8.5"
+goctl model mysql ddl -src="./sql/homestay.sql" -dir="../app/travel/service/model" --home="./goctl/1.8.5" -c
 ```

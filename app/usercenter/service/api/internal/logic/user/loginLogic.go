@@ -42,7 +42,5 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		AccessToken:  loginResp.AccessToken,
 		AccessExpire: loginResp.AccessExpire,
 		RefreshAfter: loginResp.RefreshAfter,
-		Code:         int64(xerr.OK),
-		Msg:          "success",
 	}, err
 }
