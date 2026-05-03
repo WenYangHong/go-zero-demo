@@ -1,0 +1,29 @@
+syntax = "v1"
+
+info(
+    title: "民宿服务"
+    desc: "民宿服务"
+    author: "hwy"
+    email: "13858126467@163.com"
+    version: "v1"
+)
+
+
+
+
+type (
+    HomestayCommonListReq {
+        Id       string `form:"id"`
+        Page     int64  `form:"page,optional"`
+        PageSize int64  `form:"page_size,optional"`
+    }
+    HomestayCommonResp{
+        Content string `json:"content"`
+        StarResult int64  `json:"star_result"`
+        UserName string `json:"user_name"`
+        CreateTime string `json:"create_time"`
+    }
+    HomestayCommonListResp {
+        List []HomestayCommonResp `json:"list"`
+    }
+)

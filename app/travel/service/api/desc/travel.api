@@ -10,6 +10,7 @@ info (
 
 import (
 	"homestay/homestay.api"
+	"homestay/homestayCommon.api"
 )
 
 // 民宿信息
@@ -32,6 +33,14 @@ service travel {
 
 	@doc "homestay room detail"
 	@handler homestayDetail
-	post /homestay/homestayDetail (HomestayDetailReq) returns (HomestayDetailResp)
+	get /homestay/homestay-detail (HomestayDetailReq) returns (HomestayDetailResp)
+
+	@doc "homestay room eatra detail"
+	@handler homestayExtraDetail
+	get /homestay/homestay-extra-detail (HomestayDetailReq) returns (HomestayDetailResp)
+
+	@doc "homestay room common list"
+	@handler homestayCommonList
+	get /homestay/homestay-common-list (HomestayCommonListReq) returns (HomestayCommonListResp)
 }
 

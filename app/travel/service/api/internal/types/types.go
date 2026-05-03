@@ -14,7 +14,7 @@ type BusinessListResp struct {
 }
 
 type CommonResp struct {
-	Code int64  `json:"code"`
+	Code uint32 `json:"code"`
 	Msg  string `json:"msg"`
 }
 
@@ -26,7 +26,7 @@ type GuessListResp struct {
 }
 
 type Homestay struct {
-	Id                  int64   `json:"id"`
+	Id                  string  `json:"id"`
 	Title               string  `json:"title"`
 	SubTitle            string  `json:"subTitle"`
 	Banner              string  `json:"banner"`
@@ -42,12 +42,61 @@ type Homestay struct {
 	MarketHomestayPrice float64 `json:"marketHomestayPrice"` //民宿市场价格
 }
 
+type HomestayCommonList struct {
+	Content  string `json:"content"`
+	Star     string `json:"star"`
+	UserName string `json:"user_name"`
+}
+
+type HomestayCommonListReq struct {
+	Id       string `form:"id"`
+	Page     int64  `form:"page,optional"`
+	PageSize int64  `form:"page_size,optional"`
+}
+
+type HomestayCommonListResp struct {
+	List []HomestayCommonResp `json:"list"`
+}
+
+type HomestayCommonResp struct {
+	Content    string `json:"content"`
+	StarResult int64  `json:"star_result"`
+	UserName   string `json:"user_name"`
+	CreateTime string `json:"create_time"`
+}
+
 type HomestayDetailReq struct {
-	Id int64 `json:"id"`
+	Id string `form:"id"`
 }
 
 type HomestayDetailResp struct {
 	Homestay Homestay `json:"homestay"`
+	CommonResp
+}
+
+type HomestayExtra struct {
+	CommonStarPoint     float32 `json:"common_star_point"`
+	CommonCount         int64   `json:"common_count"`
+	BossName            string  `json:"boss_name"`
+	Banner              string  `json:"banner"`
+	Info                string  `json:"info"`
+	PeopleNum           int64   `json:"peopleNum"`           //容纳人的数量
+	HomestayBusinessId  int64   `json:"homestayBusinessId"`  //店铺id
+	UserId              int64   `json:"userId"`              //房东id
+	RowState            int64   `json:"rowState"`            //0:下架 1:上架
+	RowType             int64   `json:"rowType"`             //售卖类型0：按房间出售 1:按人次出售
+	FoodInfo            string  `json:"foodInfo"`            //餐食标准
+	FoodPrice           float64 `json:"foodPrice"`           //餐食价格
+	HomestayPrice       float64 `json:"homestayPrice"`       //民宿价格
+	MarketHomestayPrice float64 `json:"marketHomestayPrice"` //民宿市场价格
+}
+
+type HomestayExtraCommonListResp struct {
+	List []HomestayCommonList `json:"homestay_extra"`
+}
+
+type HomestayExtraDetailResp struct {
+	Homestay Homestay `json:"homestay_extra"`
 }
 
 type HomestayListReq struct {

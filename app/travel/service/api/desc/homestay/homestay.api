@@ -3,15 +3,36 @@ syntax = "v1"
 info(
     title: "民宿服务"
     desc: "民宿服务"
-    author: "Mikael"
-    email: "13247629622@163.com"
+    author: "hwy"
+    email: "13858126467@163.com"
     version: "v1"
 )
-
+type HomestayCommonList{
+    Content string `json:"content"`
+    Star string `json:"star"`
+    UserName string `json:"user_name"`
+}
 type Homestay {
-    Id int64 `json:"id"`
+    Id string `json:"id"`
     Title string `json:"title"`
     SubTitle string `json:"subTitle"`
+    Banner string `json:"banner"`
+    Info string `json:"info"`
+    PeopleNum int64 `json:"peopleNum"`                       //容纳人的数量
+    HomestayBusinessId int64 `json:"homestayBusinessId"`     //店铺id
+    UserId int64 `json:"userId"`                             //房东id
+    RowState int64 `json:"rowState"`                         //0:下架 1:上架
+    RowType int64 `json:"rowType"`                           //售卖类型0：按房间出售 1:按人次出售
+    FoodInfo string `json:"foodInfo"`                        //餐食标准
+    FoodPrice float64 `json:"foodPrice"`                     //餐食价格
+    HomestayPrice float64 `json:"homestayPrice"`             //民宿价格
+    MarketHomestayPrice float64 `json:"marketHomestayPrice"` //民宿市场价格
+}
+
+type HomestayExtra {
+    CommonStarPoint float32 `json:"common_star_point"`
+    CommonCount int64 `json:"common_count"`
+    BossName string `json:"boss_name"`
     Banner string `json:"banner"`
     Info string `json:"info"`
     PeopleNum int64 `json:"peopleNum"`                       //容纳人的数量
@@ -53,7 +74,7 @@ type (
 
 type (
     CommonResp {
-        Code int64 `json:"code"`
+        Code uint32 `json:"code"`
         Msg string `json:"msg"`
     }
 )
@@ -67,9 +88,16 @@ type (
 
 type (
     HomestayDetailReq {
-        Id int64 `json:"id"`
+        Id string `form:"id"`
     }
     HomestayDetailResp {
         Homestay Homestay `json:"homestay"`
+        CommonResp
+    }
+    HomestayExtraDetailResp {
+        Homestay Homestay `json:"homestay_extra"`
+    }
+    HomestayExtraCommonListResp {
+        List []HomestayCommonList `json:"homestay_extra"`
     }
 )

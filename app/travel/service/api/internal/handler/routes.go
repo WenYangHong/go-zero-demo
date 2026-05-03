@@ -28,10 +28,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: homestay.GuessListHandler(serverCtx),
 			},
 			{
+				// homestay room common list
+				Method:  http.MethodGet,
+				Path:    "/homestay/homestay-common-list",
+				Handler: homestay.HomestayCommonListHandler(serverCtx),
+			},
+			{
 				// homestay room detail
-				Method:  http.MethodPost,
-				Path:    "/homestay/homestayDetail",
+				Method:  http.MethodGet,
+				Path:    "/homestay/homestay-detail",
 				Handler: homestay.HomestayDetailHandler(serverCtx),
+			},
+			{
+				// homestay room eatra detail
+				Method:  http.MethodGet,
+				Path:    "/homestay/homestay-extra-detail",
+				Handler: homestay.HomestayExtraDetailHandler(serverCtx),
 			},
 			{
 				// homestay room list

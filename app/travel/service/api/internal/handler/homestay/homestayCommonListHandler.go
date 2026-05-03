@@ -10,16 +10,16 @@ import (
 	"go-zero-mall/app/travel/service/api/internal/types"
 )
 
-func BusinessListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func HomestayCommonListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.BusinessListReq
+		var req types.HomestayCommonListReq
 		if err := httpx.Parse(r, &req); err != nil {
 			middleware.ErrorJson(w, r, http.StatusBadRequest, "参数错误")
 			return
 		}
 
-		l := homestay.NewBusinessListLogic(r.Context(), svcCtx)
-		resp, err := l.BusinessList(&req)
+		l := homestay.NewHomestayCommonListLogic(r.Context(), svcCtx)
+		resp, err := l.HomestayCommonList(&req)
 		if err != nil {
 			middleware.ErrorJson(w, r, http.StatusInternalServerError, "请求失败")
 		} else {

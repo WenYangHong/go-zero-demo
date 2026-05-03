@@ -2,13 +2,16 @@ package homestay
 
 import (
 	"context"
-	"github.com/Masterminds/squirrel"
-	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-mall/app/travel/service/api/internal/svc"
 	"go-zero-mall/app/travel/service/api/internal/types"
 	"go-zero-mall/app/travel/service/model"
 	"go-zero-mall/pkg/tool"
+	"go-zero-mall/pkg/xerr"
+	"strconv"
+
+	"github.com/Masterminds/squirrel"
+	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type HomestayListLogic struct {
@@ -60,7 +63,7 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 			return &types.HomestayListResp{
 				List: []types.Homestay{},
 				CommonResp: types.CommonResp{
-					Code: 200,
+					Code: xerr.OK,
 					Msg:  "success",
 				},
 			}, nil
@@ -84,7 +87,7 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 		return &types.HomestayListResp{
 			List: []types.Homestay{},
 			CommonResp: types.CommonResp{
-				Code: 200,
+				Code: xerr.OK,
 				Msg:  "success",
 			},
 		}, nil
@@ -92,16 +95,19 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 	for _, hs := range homestayList {
 		var ty types.Homestay
 		_ = copier.Copy(&ty, hs)
-		ty.FoodPrice = tool.Fen2Yuan(hs.FoodPrice)
-		ty.HomestayPrice = tool.Fen2Yuan(hs.HomestayPrice)
-		ty.MarketHomestayPrice = tool.Fen2Yuan(hs.MarketHomestayPrice)
+		ty.Id = strconv.FormatInt(hs.Id, 10)
+		ty.HomestayBusinessId = hs.HomestayBusinessId
+		ty.UserId = hs.UserId
+		ty.FoodPrice = tool.ToFloat(hs.FoodPrice)
+		ty.HomestayPrice = tool.ToFloat(hs.HomestayPrice)
+		ty.MarketHomestayPrice = tool.ToFloat(hs.MarketHomestayPrice)
 		respList = append(respList, ty)
 	}
 
 	return &types.HomestayListResp{
 		List: respList,
 		CommonResp: types.CommonResp{
-			Code: 200,
+			Code: xerr.OK,
 			Msg:  "success",
 		},
 	}, nil

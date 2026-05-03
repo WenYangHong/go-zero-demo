@@ -1,5 +1,7 @@
 package common
 
+import "go-zero-mall/pkg/xerr"
+
 type ResponseSuccessBean struct {
 	Code uint32      `json:"code"`
 	Msg  string      `json:"msg"`
@@ -8,7 +10,7 @@ type ResponseSuccessBean struct {
 type NullJson struct{}
 
 func Success(data interface{}) *ResponseSuccessBean {
-	return &ResponseSuccessBean{200, "OK", data}
+	return &ResponseSuccessBean{xerr.OK, "OK", data}
 }
 
 type ResponseErrorBean struct {

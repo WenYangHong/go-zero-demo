@@ -15,5 +15,9 @@ func Yuan2Fen(yuan float64) int64 {
 
 	f, _ := decimal.NewFromFloat(yuan).Mul(oneHundredDecimal).Truncate(0).Float64()
 	return int64(f)
+}
 
+func ToFloat(yuan int64) float64 {
+	y, _ := decimal.NewFromInt(yuan).Float64()
+	return y
 }
