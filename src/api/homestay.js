@@ -1,7 +1,7 @@
 import request from './request'
 
 export function getHomestayList(params) {
-  return request.get('/homestay/list', { params })
+  return request.post('/travel/v1/homestay/homestayList', params)
 }
 
 export function getHomestayDetail(id) {

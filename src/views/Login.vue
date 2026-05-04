@@ -21,28 +21,46 @@
 
       <div class="bg-surface rounded-2xl shadow-card p-6">
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-position="top">
-          <el-form-item label="手机号" prop="phone">
+          <el-form-item label="账号" prop="username">
             <el-input
-              v-model="loginForm.phone"
-              placeholder="请输入手机号"
+              v-model="loginForm.username"
+              placeholder="请输入手机号或邮箱"
               size="large"
-              maxlength="11"
-            >
-              <template #append>
-                <el-button :disabled="codeCooldown > 0" @click="handleSendCode">
-                  {{ codeCooldown > 0 ? `${codeCooldown}秒后重试` : '获取验证码' }}
-                </el-button>
-              </template>
-            </el-input>
+              :prefix-icon="User"
+            />
           </el-form-item>
 
-          <el-form-item label="验证码" prop="code">
+          <el-form-item label="密码" prop="password">
             <el-input
-              v-model="loginForm.code"
-              placeholder="请输入验证码"
+              v-model="loginForm.password"
+              type="password"
+              placeholder="请输入密码"
               size="large"
-              maxlength="6"
+              show-password
+              :prefix-icon="Lock"
             />
+          </el-form-item>
+
+          <el-form-item label="图形验证码" prop="captcha">
+            <div class="flex gap-3">
+              <el-input
+                v-model="loginForm.captcha"
+                placeholder="请输入图形验证码"
+                size="large"
+                maxlength="4"
+                class="flex-1"
+                :prefix-icon="Key"
+                @keyup.enter="handleLogin"
+              />
+              <div
+                class="captcha-container flex items-center justify-center cursor-pointer rounded-lg overflow-hidden border border-outline-variant select-none"
+                :style="{ width: '120px', height: '40px' }"
+                title="点击刷新验证码"
+                @click="refreshCaptcha"
+              >
+                <canvas ref="captchaCanvas" width="120" height="40" />
+              </div>
+            </div>
           </el-form-item>
 
           <div class="flex items-center justify-between text-sm mb-4">
@@ -50,7 +68,13 @@
             <a href="#" class="text-primary hover:underline">忘记密码？</a>
           </div>
 
-          <el-button type="primary" size="large" class="w-full" :loading="loading" @click="handleLogin">
+          <el-button
+            type="primary"
+            size="large"
+            class="w-full"
+            :loading="loading"
+            @click="handleLogin"
+          >
             登录
           </el-button>
         </el-form>
@@ -85,67 +109,124 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowLeft, HomeFilled, ChatDotRound, Iphone } from '@element-plus/icons-vue'
+import { ArrowLeft, HomeFilled, ChatDotRound, Iphone, User, Lock, Key } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
+import {loginByPassword} from "../api/user.js";
 
 const router = useRouter()
 const userStore = useUserStore()
 
 const loginFormRef = ref(null)
+const captchaCanvas = ref(null)
 const loading = ref(false)
-const codeCooldown = ref(0)
 
 const loginForm = reactive({
-  phone: '',
-  code: '',
+  username: '',
+  password: '',
+  captcha: '',
   remember: true,
 })
 
+let captchaText = ''
+
 const loginRules = {
-  phone: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' },
+  username: [
+    { required: true, message: '请输入账号', trigger: 'blur' },
   ],
-  code: [
-    { required: true, message: '请输入验证码', trigger: 'blur' },
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码至少6位', trigger: 'blur' },
+  ],
+  captcha: [
+    { required: true, message: '请输入图形验证码', trigger: 'blur' },
+    { len: 4, message: '图形验证码为4位', trigger: 'blur' },
   ],
 }
 
-function handleSendCode() {
-  if (!loginForm.phone) {
-    ElMessage.warning('请先输入手机号')
-    return
+function drawCaptcha(text) {
+  const canvas = captchaCanvas.value
+  if (!canvas) return
+  const ctx = canvas.getContext('2d')
+  const w = canvas.width
+  const h = canvas.height
+
+  ctx.fillStyle = '#f3f4f2'
+  ctx.fillRect(0, 0, w, h)
+
+  ctx.font = 'bold 24px Nunito, Noto Sans SC, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+
+  const chars = text.split('')
+  chars.forEach((char, i) => {
+    const x = (w / 5) * (i + 1)
+    const y = h / 2 + (Math.random() - 0.5) * 10
+    const angle = (Math.random() - 0.5) * 0.4
+    const colors = ['#059669', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6']
+    ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)]
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(angle)
+    ctx.fillText(char, 0, 0)
+    ctx.restore()
+  })
+
+  for (let i = 0; i < 5; i++) {
+    ctx.strokeStyle = `rgba(0, 0, 0, ${Math.random() * 0.1})`
+    ctx.beginPath()
+    ctx.moveTo(Math.random() * w, Math.random() * h)
+    ctx.lineTo(Math.random() * w, Math.random() * h)
+    ctx.stroke()
   }
-  if (!/^1[3-9]\d{9}$/.test(loginForm.phone)) {
-    ElMessage.warning('请输入正确的手机号')
-    return
+
+  for (let i = 0; i < 30; i++) {
+    ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.15})`
+    ctx.beginPath()
+    ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 1.5, 0, Math.PI * 2)
+    ctx.fill()
   }
-  codeCooldown.value = 60
-  const timer = setInterval(() => {
-    codeCooldown.value--
-    if (codeCooldown.value <= 0) {
-      clearInterval(timer)
-    }
-  }, 1000)
-  ElMessage.success('验证码已发送')
+}
+
+function generateCaptcha() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
+  let text = ''
+  for (let i = 0; i < 4; i++) {
+    text += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  captchaText = text
+  drawCaptcha(text)
+}
+
+function refreshCaptcha() {
+  generateCaptcha()
 }
 
 async function handleLogin() {
   const valid = await loginFormRef.value.validate().catch(() => false)
   if (!valid) return
 
+  if (loginForm.captcha.toLowerCase() !== captchaText.toLowerCase()) {
+    ElMessage.error('图形验证码错误')
+    loginForm.captcha = ''
+    refreshCaptcha()
+    return
+  }
+
   loading.value = true
   try {
-    // TODO: 调用后端登录接口
-    // const res = await loginByCode({ phone: loginForm.phone, code: loginForm.code })
-    // userStore.setToken(res.token)
+    const res = await loginByPassword({
+      mobile: loginForm.username,
+      password: loginForm.password,
+    })
+    userStore.setToken(res.accessToken)
     ElMessage.success('登录成功')
     router.push('/')
-  } catch {
-    // 错误已在拦截器中处理
+  } catch (e) {
+    console.log("login false",e)
+    refreshCaptcha()
   } finally {
     loading.value = false
   }
@@ -158,4 +239,14 @@ function handleWechatLogin() {
 function handleSmsLogin() {
   ElMessage.info('短信登录功能开发中')
 }
+
+onMounted(() => {
+  generateCaptcha()
+})
 </script>
+
+<style scoped>
+.captcha-container {
+  flex-shrink: 0;
+}
+</style>

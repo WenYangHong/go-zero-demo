@@ -44,7 +44,14 @@
               </template>
             </el-input>
           </el-form-item>
-
+          <el-form-item label="昵称" prop="nickname">
+            <el-input
+                v-model="registerForm.nickname"
+                type="text"
+                placeholder="请设置账户昵称"
+                size="large"
+            />
+          </el-form-item>
           <el-form-item label="设置密码" prop="password">
             <el-input
               v-model="registerForm.password"
@@ -109,9 +116,10 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, HomeFilled, ChatDotRound } from '@element-plus/icons-vue'
-
+import {register} from "../api/user.js";
+import { useUserStore } from '@/stores/user'
 const router = useRouter()
-
+const userStore = useUserStore()
 const registerFormRef = ref(null)
 const loading = ref(false)
 const codeCooldown = ref(0)
@@ -120,6 +128,7 @@ const registerForm = reactive({
   phone: '',
   code: '',
   password: '',
+  nickname: '',
   confirmPassword: '',
   agree: false,
 })
@@ -139,6 +148,9 @@ const registerRules = {
   ],
   code: [
     { required: true, message: '请输入验证码', trigger: 'blur' },
+  ],
+  nickname: [
+    { required: true, message: '请输入昵称', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请设置密码', trigger: 'blur' },
@@ -181,11 +193,13 @@ async function handleRegister() {
   loading.value = true
   try {
     // TODO: 调用后端注册接口
-    // await register({ phone: registerForm.phone, code: registerForm.code, password: registerForm.password })
+    const res = await register({ mobile: registerForm.phone, nick_name: registerForm.nickname, password: registerForm.password })
     ElMessage.success('注册成功')
-    router.push('/login')
-  } catch {
+    userStore.setToken(res.accessToken)
+    router.push('/')
+  } catch (e){
     // 错误已在拦截器中处理
+    console.error(e)
   } finally {
     loading.value = false
   }

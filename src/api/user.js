@@ -5,7 +5,7 @@ export function loginByCode(data) {
 }
 
 export function loginByPassword(data) {
-  return request.post('/user/login/password', data)
+  return request.post('/usercenter/v1/user/login', data)
 }
 
 export function sendVerifyCode(phone) {
@@ -13,7 +13,7 @@ export function sendVerifyCode(phone) {
 }
 
 export function register(data) {
-  return request.post('/user/register', data)
+  return request.post('/usercenter/v1/user/register', data)
 }
 
 export function getUserInfo() {
