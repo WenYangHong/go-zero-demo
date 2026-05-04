@@ -1,6 +1,7 @@
 package tool
 
 import (
+	"github.com/zeromicro/go-zero/core/logx"
 	"sync"
 	"time"
 )
@@ -59,6 +60,7 @@ func NextId() int64 {
 	if defaultNode == nil {
 		panic("snowflake not initialized")
 	}
+	logx.Info("NextId", defaultNode)
 	return defaultNode.next()
 }
 

@@ -4,14 +4,13 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/service"
+	"github.com/zeromicro/go-zero/zrpc"
 	"go-zero-mall/app/usercenter/service/rpc/internal/config"
 	"go-zero-mall/app/usercenter/service/rpc/internal/server"
 	"go-zero-mall/app/usercenter/service/rpc/internal/svc"
 	"go-zero-mall/app/usercenter/service/rpc/pb"
-
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/core/service"
-	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -23,6 +22,7 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

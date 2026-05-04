@@ -2,14 +2,15 @@ package logic
 
 import (
 	"context"
-	"github.com/pkg/errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"go-zero-mall/app/usercenter/service/rpc/internal/model"
 	"go-zero-mall/app/usercenter/service/rpc/internal/svc"
 	"go-zero-mall/app/usercenter/service/rpc/pb"
 	"go-zero-mall/pkg/tool"
 	"go-zero-mall/pkg/xerr"
+
+	"github.com/pkg/errors"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 var ErrUserAlreadyRegisterError = xerr.NewErrMsg("user has been registered")
@@ -39,12 +40,14 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		return nil, errors.WithMessage(xerr.NewErrCode(xerr.REQISTER_USER_EXIST_ERROR), xerr.MapErrMsg(xerr.REQISTER_USER_EXIST_ERROR))
 	}
 	var userId int64
-	// 开始新增
 	if err := l.svcCtx.UserModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		user := new(model.Users)
+		user.Id = tool.NextId()
 		user.Mobile = in.Mobile
 		if len(in.Nickname) == 0 {
 			user.Nickname = tool.Krand(8, tool.KC_RAND_KIND_ALL)
+		} else {
+			user.Nickname = in.Nickname
 		}
 		if len(in.Password) > 0 {
 			user.Password = tool.Md5ByString(in.Password)

@@ -18,6 +18,7 @@ type Homestay {
     SubTitle string `json:"subTitle"`
     Banner string `json:"banner"`
     Info string `json:"info"`
+    Tag string `json:"tag"`
     PeopleNum int64 `json:"peopleNum"`                       //容纳人的数量
     HomestayBusinessId int64 `json:"homestayBusinessId"`     //店铺id
     UserId int64 `json:"userId"`                             //房东id

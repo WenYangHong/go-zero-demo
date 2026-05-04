@@ -20,6 +20,7 @@ type (
     RegisterReq {
         Mobile string `json:"mobile" validate:"required"`
         Password string `json:"password" validate:"required,len=6"`
+        NickName string    `json:"nick_name"`
     }
     RegisterResp {
         AccessToken string `json:"accessToken"`

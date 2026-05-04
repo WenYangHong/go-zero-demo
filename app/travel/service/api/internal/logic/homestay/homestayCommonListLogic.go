@@ -47,17 +47,16 @@ func (l *HomestayCommonListLogic) HomestayCommonList(req *types.HomestayCommonLi
 	userBuilder := l.svcCtx.UsersModel.SelectBuilder().Where(squirrel.Eq{
 		"id": userIdList,
 	})
-	sqlStr, args, _ := userBuilder.ToSql()
-	fmt.Printf("[DEBUG] Users FindAll SQL: %s, args: %v\n", sqlStr, args)
-	// todo 这里查询有问题 暂未解决
-	// userInfo, err := l.svcCtx.UsersModel.NewUsersModel(l.ctx, userBuilder, "id desc")
+	userInfo, err := l.svcCtx.UsersModel.FindAll(l.ctx, userBuilder, "id desc")
+	if err != nil {
+		fmt.Printf("[ERROR] FindAll users failed: %v, userIdList: %v\n", err, userIdList)
+	}
+	fmt.Printf("[DEBUG] FindAll users result: count=%d, userIdList=%v\n", len(userInfo), userIdList)
 
 	userIdNameMap := make(map[int64]string)
-	// if len(userInfo) > 0 {
-	// 	for _, v := range userInfo {
-	// 		userIdNameMap[v.Id] = v.Nickname
-	// 	}
-	// }
+	for _, v := range userInfo {
+		userIdNameMap[v.Id] = v.Nickname
+	}
 	fmt.Println("userIdNameMap", userIdNameMap)
 	var list []types.HomestayCommonResp
 	for _, v := range commonList {

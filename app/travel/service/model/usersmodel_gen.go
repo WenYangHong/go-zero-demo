@@ -56,17 +56,17 @@ type (
 	}
 
 	Users struct {
-		Id         int64     `db:"id"`
-		Mobile     string    `db:"mobile"`   // 手机号
-		Password   string    `db:"password"` // 密码(MD5加密)
-		Nickname   string    `db:"nickname"` // 用户昵称
-		Avatar     string    `db:"avatar"`   // 头像URL
-		Status     int64     `db:"status"`   // 状态(1:正常 2:禁用)
-		CreatedAt  time.Time `db:"created_at"`
-		UpdatedAt  time.Time `db:"updated_at"`
-		DeleteTime time.Time `db:"delete_time"`
-		DelState   int64     `db:"del_state"`
-		Version    int64     `db:"version"` // 版本号
+		Id         int64        `db:"id"`
+		Mobile     string       `db:"mobile"`   // 手机号
+		Password   string       `db:"password"` // 密码(MD5加密)
+		Nickname   string       `db:"nickname"` // 用户昵称
+		Avatar     string       `db:"avatar"`   // 头像URL
+		Status     int64        `db:"status"`   // 状态(1:正常 2:禁用)
+		CreatedAt  time.Time    `db:"created_at"`
+		UpdatedAt  time.Time    `db:"updated_at"`
+		DeleteTime sql.NullTime `db:"delete_time"`
+		DelState   int64        `db:"del_state"`
+		Version    int64        `db:"version"` // 版本号
 	}
 )
 
@@ -78,7 +78,7 @@ func newUsersModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultUsersModel {
 }
 
 func (m *defaultUsersModel) Insert(ctx context.Context, session sqlx.Session, data *Users) (sql.Result, error) {
-	data.DeleteTime = time.Unix(0, 0)
+	data.DeleteTime = sql.NullTime{Time: time.Unix(0, 0), Valid: true}
 	data.DelState = globalkey.DelStateNo
 	usersIdKey := fmt.Sprintf("%s%v", cacheUsersIdPrefix, data.Id)
 	usersMobileKey := fmt.Sprintf("%s%v", cacheUsersMobilePrefix, data.Mobile)
@@ -181,7 +181,7 @@ func (m *defaultUsersModel) UpdateWithVersion(ctx context.Context, session sqlx.
 
 func (m *defaultUsersModel) DeleteSoft(ctx context.Context, session sqlx.Session, data *Users) error {
 	data.DelState = globalkey.DelStateYes
-	data.DeleteTime = time.Now()
+	data.DeleteTime = sql.NullTime{Time: time.Now(), Valid: true}
 	if err := m.UpdateWithVersion(ctx, session, data); err != nil {
 		return errors.Wrapf(errors.New("delete soft failed "), "UsersModel delete err : %+v", err)
 	}

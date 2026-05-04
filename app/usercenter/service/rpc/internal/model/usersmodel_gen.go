@@ -21,7 +21,7 @@ import (
 var (
 	usersFieldNames          = builder.RawFieldNames(&Users{})
 	usersRows                = strings.Join(usersFieldNames, ",")
-	usersRowsExpectAutoSet   = strings.Join(stringx.Remove(usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	usersRowsExpectAutoSet   = strings.Join(stringx.Remove(usersFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	usersRowsWithPlaceHolder = strings.Join(stringx.Remove(usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheUsersIdPrefix     = "cache:users:id:"
@@ -62,7 +62,6 @@ func (m *defaultUsersModel) Trans(ctx context.Context, fn func(ctx context.Conte
 	})
 
 }
-
 
 func newUsersModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultUsersModel {
 	return &defaultUsersModel{
@@ -127,8 +126,8 @@ func (m *defaultUsersModel) Insert(ctx context.Context, data *Users) (sql.Result
 	usersIdKey := fmt.Sprintf("%s%v", cacheUsersIdPrefix, data.Id)
 	usersMobileKey := fmt.Sprintf("%s%v", cacheUsersMobilePrefix, data.Mobile)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, usersRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Mobile, data.Password, data.Nickname, data.Avatar, data.Status)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, usersRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Id, data.Mobile, data.Password, data.Nickname, data.Avatar, data.Status)
 	}, usersIdKey, usersMobileKey)
 	return ret, err
 }
