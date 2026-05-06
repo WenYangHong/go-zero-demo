@@ -2,11 +2,12 @@
   <router-link :to="`/homestay/${homestay.id}`" class="group bg-surface rounded-xl shadow-card overflow-hidden hover:shadow-float transition-all block">
     <div class="relative aspect-[4/3] overflow-hidden">
       <img
-        :src="homestay.cover"
+        :src="homestay.banner"
         :alt="homestay.title"
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         @error="handleImgError"
       />
+      {{  homestay }}
       <span
         v-if="homestay.tag"
         class="absolute top-3 left-3 px-3 py-1 text-xs font-medium rounded-full text-white"
@@ -17,19 +18,19 @@
     </div>
     <div class="p-4">
       <div class="flex items-center gap-2 mb-2">
-        <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded">{{ homestay.category }}</span>
-        <span class="px-2 py-0.5 bg-surface-container text-on-surface-variant text-xs rounded">可住{{ homestay.capacity }}人</span>
+        <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded">{{ homestay.tag }}</span>
+        <span class="px-2 py-0.5 bg-surface-container text-on-surface-variant text-xs rounded">可住{{ homestay.people_num }}人</span>
       </div>
       <h3 class="font-semibold text-on-surface mb-1 group-hover:text-primary transition-colors">{{ homestay.title }}</h3>
-      <p class="text-sm text-on-surface-variant mb-3 line-clamp-2">{{ homestay.description }}</p>
+      <p class="text-sm text-on-surface-variant mb-3 line-clamp-2">{{ homestay.sub_title }}</p>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-1">
           <el-icon class="text-warning"><StarFilled /></el-icon>
-          <span class="text-sm font-medium">{{ homestay.rating }}</span>
-          <span class="text-sm text-on-surface-variant">({{ homestay.reviewCount }}条评价)</span>
+          <span class="text-sm font-medium">{{ homestay.comment_avg_score }}</span>
+          <span class="text-sm text-on-surface-variant">({{ homestay.comment_count }}条评价)</span>
         </div>
         <div>
-          <span class="text-lg font-bold text-primary">¥{{ homestay.price }}</span>
+          <span class="text-lg font-bold text-primary">¥{{ homestay.homestay_price }}</span>
           <span class="text-sm text-on-surface-variant">/晚</span>
         </div>
       </div>

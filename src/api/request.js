@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-
 const request = axios.create({
   baseURL: "http://127.0.0.1:32730/",
   timeout: 15000,
@@ -26,7 +25,7 @@ request.interceptors.response.use(
   (response) => {
     const { data } = response
     if (data.code === 200) {
-      return data
+      return data.data
     }
     ElMessage.error(data.msg || '请求失败')
     return Promise.reject(new Error(data.msg || '请求失败'))
