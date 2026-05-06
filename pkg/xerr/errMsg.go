@@ -16,6 +16,7 @@ func init() {
 	message[LOGIN_USER_NOT_FOUND_ERROR] = "账号不存在"
 	message[LOGIN_PASSWORD_ERROR] = "密码错误"
 	message[LOGIN_ERROR] = "账号登录失败"
+	message[COMMENT_CREATE_FAIL] = "民宿评价失败"
 }
 
 func MapErrMsg(errcode uint32) string {

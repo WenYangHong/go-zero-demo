@@ -3,13 +3,11 @@ package homestay
 import (
 	"context"
 	"fmt"
-	"go-zero-mall/app/travel/service/api/internal/svc"
-	"go-zero-mall/app/travel/service/api/internal/types"
-	"strconv"
-
 	"github.com/Masterminds/squirrel"
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
+	"go-zero-mall/app/travel/service/api/internal/svc"
+	"go-zero-mall/app/travel/service/api/internal/types"
 )
 
 type HomestayCommonListLogic struct {
@@ -57,12 +55,15 @@ func (l *HomestayCommonListLogic) HomestayCommonList(req *types.HomestayCommonLi
 	for _, v := range userInfo {
 		userIdNameMap[v.Id] = v.Nickname
 	}
-	fmt.Println("userIdNameMap", userIdNameMap)
 	var list []types.HomestayCommonResp
 	for _, v := range commonList {
 		var ty types.HomestayCommonResp
 		_ = copier.Copy(&ty, v)
-		ty.StarResult, _ = strconv.ParseInt(v.Star, 10, 32)
+		ty.AvgStarResult = v.AvgStar
+		ty.CleanlinessStarResult = v.CleanlinessStar
+		ty.LocationStarResult = v.LocationStar
+		ty.ServiceStarResult = v.ServiceStar
+		ty.ValueStarResult = v.ValueStar
 		ty.UserName = userIdNameMap[v.UserId]
 		ty.CreateTime = v.CreateTime.Format("2006-01-02 15:04:05")
 		list = append(list, ty)

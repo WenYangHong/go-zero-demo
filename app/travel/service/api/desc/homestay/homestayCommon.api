@@ -8,22 +8,40 @@ info(
     version: "v1"
 )
 
-
-
-
 type (
     HomestayCommonListReq {
-        Id       string `form:"id"`
-        Page     int64  `form:"page,optional"`
-        PageSize int64  `form:"page_size,optional"`
+        Id string `form:"id"`
+        Page int64 `form:"page,optional"`
+        PageSize int64 `form:"page_size,optional"`
     }
-    HomestayCommonResp{
+    HomestayCommonResp {
         Content string `json:"content"`
-        StarResult int64  `json:"star_result"`
+        AvgStarResult float64 `json:"avg_star_result"`
+        CleanlinessStarResult float64 `json:"cleanliness_star_result"`
+        LocationStarResult float64 `json:"locaiton_star_result"`
+        ServiceStarResult float64 `json:"service_star_result"`
+        ValueStarResult float64 `json:"value_star_result"`
         UserName string `json:"user_name"`
         CreateTime string `json:"create_time"`
     }
     HomestayCommonListResp {
         List []HomestayCommonResp `json:"list"`
+    }
+)
+
+
+
+type (
+    HomestayCommonCreateReq {
+        CleanlinessStar float64 `json:"cleanliness_star",validate:"required"`
+        LocationStar float64 `json:"location_star",validate:"required"`
+        ServiceStar float64 `json:"service_star",validate:"required"`
+        ValueStar float64 `json:"value_star",validate:"required"`
+        Content string `json:"content"`
+        HomestayId string `json:"homestay_id",validate:"required"`
+    }
+    HomestayCommonCreateResp {
+        Code uint32 `json:"code"`
+        Msg string `json:"msg"`
     }
 )

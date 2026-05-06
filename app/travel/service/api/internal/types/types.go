@@ -43,6 +43,20 @@ type Homestay struct {
 	MarketHomestayPrice float64 `json:"marketHomestayPrice"` //民宿市场价格
 }
 
+type HomestayCommonCreateReq struct {
+	CleanlinessStar float64 `json:"cleanliness_star",validate:"required"`
+	LocationStar    float64 `json:"location_star",validate:"required"`
+	ServiceStar     float64 `json:"service_star",validate:"required"`
+	ValueStar       float64 `json:"value_star",validate:"required"`
+	Content         string  `json:"content"`
+	HomestayId      string  `json:"homestay_id",validate:"required"`
+}
+
+type HomestayCommonCreateResp struct {
+	Code uint32 `json:"code"`
+	Msg  string `json:"msg"`
+}
+
 type HomestayCommonList struct {
 	Content  string `json:"content"`
 	Star     string `json:"star"`
@@ -60,10 +74,14 @@ type HomestayCommonListResp struct {
 }
 
 type HomestayCommonResp struct {
-	Content    string `json:"content"`
-	StarResult int64  `json:"star_result"`
-	UserName   string `json:"user_name"`
-	CreateTime string `json:"create_time"`
+	Content               string  `json:"content"`
+	AvgStarResult         float64 `json:"avg_star_result"`
+	CleanlinessStarResult float64 `json:"cleanliness_star_result"`
+	LocationStarResult    float64 `json:"locaiton_star_result"`
+	ServiceStarResult     float64 `json:"service_star_result"`
+	ValueStarResult       float64 `json:"value_star_result"`
+	UserName              string  `json:"user_name"`
+	CreateTime            string  `json:"create_time"`
 }
 
 type HomestayDetailReq struct {

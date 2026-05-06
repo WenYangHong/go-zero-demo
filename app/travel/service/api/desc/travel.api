@@ -44,3 +44,14 @@ service travel {
 	get /homestay/homestay-common-list (HomestayCommonListReq) returns (HomestayCommonListResp)
 }
 
+@server (
+	prefix: travel/v1
+	group:  homestay
+	jwt:    JwtAuth
+)
+service travel {
+	@doc "创建评价"
+	@handler homestayCommonCreate
+	post /homestay/create (HomestayCommonCreateReq) returns (HomestayCommonCreateResp)
+}
+

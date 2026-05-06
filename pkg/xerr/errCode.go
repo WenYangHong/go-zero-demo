@@ -20,3 +20,6 @@ const LOGIN_USER_NOT_FOUND_ERROR uint32 = 100103 // 登录用户未找到
 const LOGIN_PASSWORD_ERROR uint32 = 100104       // 登录账号密码不匹配
 const LOGIN_ERROR uint32 = 100105                // 登录异常
 const USER_NOT_FOUND_ERROR = 100106              // 用户信息不存在
+
+// 民宿模块
+const COMMENT_CREATE_FAIL = 200001 // 民宿评价失败

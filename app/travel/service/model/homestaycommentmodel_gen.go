@@ -54,16 +54,20 @@ type (
 	}
 
 	HomestayComment struct {
-		Id         int64     `db:"id"`
-		CreateTime time.Time `db:"create_time"`
-		UpdateTime time.Time `db:"update_time"`
-		DeleteTime time.Time `db:"delete_time"`
-		DelState   int64     `db:"del_state"`
-		HomestayId int64     `db:"homestay_id"` // 民宿id
-		UserId     int64     `db:"user_id"`     // 用户id
-		Content    string    `db:"content"`     // 评论内容
-		Star       string    `db:"star"`        // 星星数,多个维度
-		Version    int64     `db:"version"`     // 版本号
+		Id              int64     `db:"id"`
+		CreateTime      time.Time `db:"create_time"`
+		UpdateTime      time.Time `db:"update_time"`
+		DeleteTime      time.Time `db:"delete_time"`
+		DelState        int64     `db:"del_state"`
+		HomestayId      int64     `db:"homestay_id"`      // 民宿id
+		UserId          int64     `db:"user_id"`          // 用户id
+		Content         string    `db:"content"`          // 评论内容
+		AvgStar         float64   `db:"avg_star"`         // 星星数,多个维度
+		CleanlinessStar float64   `db:"cleanliness_star"` // 清洁度评价
+		LocationStar    float64   `db:"location_star"`    // 地理位置
+		ServiceStar     float64   `db:"service_star"`     // 服务态度
+		ValueStar       float64   `db:"value_star"`       // 性价比
+		Version         int64     `db:"version"`          // 版本号
 	}
 )
 
@@ -79,11 +83,11 @@ func (m *defaultHomestayCommentModel) Insert(ctx context.Context, session sqlx.S
 	data.DelState = globalkey.DelStateNo
 	homestayCommentIdKey := fmt.Sprintf("%s%v", cacheHomestayCommentIdPrefix, data.Id)
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, homestayCommentRowsExpectAutoSet)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, homestayCommentRowsExpectAutoSet)
 		if session != nil {
-			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.Star, data.Version)
+			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.AvgStar, data.CleanlinessStar, data.LocationStar, data.ServiceStar, data.ValueStar, data.Version)
 		}
-		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.Star, data.Version)
+		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.AvgStar, data.CleanlinessStar, data.LocationStar, data.ServiceStar, data.ValueStar, data.Version)
 	}, homestayCommentIdKey)
 }
 
@@ -109,9 +113,9 @@ func (m *defaultHomestayCommentModel) Update(ctx context.Context, session sqlx.S
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, homestayCommentRowsWithPlaceHolder)
 		if session != nil {
-			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.Star, data.Version, data.Id)
+			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.AvgStar, data.CleanlinessStar, data.LocationStar, data.ServiceStar, data.ValueStar, data.Version, data.Id)
 		}
-		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.Star, data.Version, data.Id)
+		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.AvgStar, data.CleanlinessStar, data.LocationStar, data.ServiceStar, data.ValueStar, data.Version, data.Id)
 	}, homestayCommentIdKey)
 }
 
@@ -127,9 +131,9 @@ func (m *defaultHomestayCommentModel) UpdateWithVersion(ctx context.Context, ses
 	sqlResult, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ? and version = ? ", m.table, homestayCommentRowsWithPlaceHolder)
 		if session != nil {
-			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.Star, data.Version, data.Id, oldVersion)
+			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.AvgStar, data.CleanlinessStar, data.LocationStar, data.ServiceStar, data.ValueStar, data.Version, data.Id, oldVersion)
 		}
-		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.Star, data.Version, data.Id, oldVersion)
+		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.HomestayId, data.UserId, data.Content, data.AvgStar, data.CleanlinessStar, data.LocationStar, data.ServiceStar, data.ValueStar, data.Version, data.Id, oldVersion)
 	}, homestayCommentIdKey)
 	if err != nil {
 		return err
