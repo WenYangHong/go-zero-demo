@@ -26,21 +26,22 @@ type GuessListResp struct {
 }
 
 type Homestay struct {
-	Id                  string  `json:"id"`
-	Title               string  `json:"title"`
-	SubTitle            string  `json:"subTitle"`
-	Banner              string  `json:"banner"`
-	Info                string  `json:"info"`
-	Tag                 string  `json:"tag"`
-	PeopleNum           int64   `json:"peopleNum"`           //容纳人的数量
-	HomestayBusinessId  int64   `json:"homestayBusinessId"`  //店铺id
-	UserId              int64   `json:"userId"`              //房东id
-	RowState            int64   `json:"rowState"`            //0:下架 1:上架
-	RowType             int64   `json:"rowType"`             //售卖类型0：按房间出售 1:按人次出售
-	FoodInfo            string  `json:"foodInfo"`            //餐食标准
-	FoodPrice           float64 `json:"foodPrice"`           //餐食价格
-	HomestayPrice       float64 `json:"homestayPrice"`       //民宿价格
-	MarketHomestayPrice float64 `json:"marketHomestayPrice"` //民宿市场价格
+	Id                  string   `json:"id"`
+	Title               string   `json:"title"`
+	SubTitle            string   `json:"sub_title"`
+	ImgInfo             []string `json:"img_info"`
+	Banner              string   `json:"banner"`
+	Info                string   `json:"info"`
+	Tag                 string   `json:"tag"`
+	PeopleNum           int64    `json:"people_num"`            //容纳人的数量
+	HomestayBusinessId  int64    `json:"homestay_business_id"`  //店铺id
+	UserId              int64    `json:"user_id"`               //房东id
+	RowState            int64    `json:"row_state"`             //0:下架 1:上架
+	RowType             int64    `json:"row_type"`              //售卖类型0：按房间出售 1:按人次出售
+	FoodInfo            string   `json:"food_info"`             //餐食标准
+	FoodPrice           float64  `json:"food_price"`            //餐食价格
+	HomestayPrice       float64  `json:"homestay_price"`        //民宿价格
+	MarketHomestayPrice float64  `json:"market_homestay_price"` //民宿市场价格
 }
 
 type HomestayCommonCreateReq struct {

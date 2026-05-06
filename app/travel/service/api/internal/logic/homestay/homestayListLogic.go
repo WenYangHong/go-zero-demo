@@ -2,6 +2,7 @@ package homestay
 
 import (
 	"context"
+	"encoding/json"
 	"go-zero-mall/app/travel/service/api/internal/svc"
 	"go-zero-mall/app/travel/service/api/internal/types"
 	"go-zero-mall/app/travel/service/model"
@@ -95,12 +96,20 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 	for _, hs := range homestayList {
 		var ty types.Homestay
 		_ = copier.Copy(&ty, hs)
+		img_info_list := []string{}
+		if hs.ImgInfo != "" || string(hs.ImgInfo) != "" {
+			err := json.Unmarshal([]byte(hs.ImgInfo), &img_info_list)
+			if err != nil {
+				img_info_list = []string{}
+			}
+		}
 		ty.Id = strconv.FormatInt(hs.Id, 10)
 		ty.HomestayBusinessId = hs.HomestayBusinessId
 		ty.UserId = hs.UserId
 		ty.FoodPrice = tool.ToFloat(hs.FoodPrice)
 		ty.HomestayPrice = tool.ToFloat(hs.HomestayPrice)
 		ty.MarketHomestayPrice = tool.ToFloat(hs.MarketHomestayPrice)
+		ty.ImgInfo = img_info_list
 		respList = append(respList, ty)
 	}
 
