@@ -30,8 +30,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// homestay room common list
 				Method:  http.MethodGet,
-				Path:    "/homestay/homestay-common-list",
-				Handler: homestay.HomestayCommonListHandler(serverCtx),
+				Path:    "/homestay/homestay-comment-list",
+				Handler: homestay.HomestayCommentListHandler(serverCtx),
 			},
 			{
 				// homestay room detail
@@ -60,8 +60,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 创建评价
 				Method:  http.MethodPost,
-				Path:    "/homestay/create",
-				Handler: homestay.HomestayCommonCreateHandler(serverCtx),
+				Path:    "/homestay/comment/create",
+				Handler: homestay.HomestayCommentCreateHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),

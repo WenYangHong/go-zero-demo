@@ -3,11 +3,13 @@ package homestay
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-zero-mall/app/travel/service/api/internal/svc"
 	"go-zero-mall/app/travel/service/api/internal/types"
 	"go-zero-mall/app/travel/service/model"
 	"go-zero-mall/pkg/tool"
 	"go-zero-mall/pkg/xerr"
+	"math"
 	"strconv"
 
 	"github.com/Masterminds/squirrel"
@@ -53,7 +55,6 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 	}
 	// 热门分类
 	if req.HomestayCate != "" {
-		// todo  我先用我的方式 查询 后面可以优化
 		// 不做二次验证了
 		homestayCategoryWhereBuilder := l.svcCtx.HomestayCategoryModel.SelectBuilder().Where(squirrel.Eq{
 			"category_id": req.HomestayCate,
@@ -93,6 +94,16 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 			},
 		}, nil
 	}
+	// 查询评价的信息
+	var homestayIdList []int64
+	for _, v := range homestayList {
+		homestayIdList = append(homestayIdList, v.Id)
+	}
+	commonMap, err := l.getCommonListById(homestayIdList)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("commonMap", commonMap)
 	for _, hs := range homestayList {
 		var ty types.Homestay
 		_ = copier.Copy(&ty, hs)
@@ -110,6 +121,16 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 		ty.HomestayPrice = tool.ToFloat(hs.HomestayPrice)
 		ty.MarketHomestayPrice = tool.ToFloat(hs.MarketHomestayPrice)
 		ty.ImgInfo = img_info_list
+
+		// 安全赋值评论数据
+		if stat, ok := commonMap[hs.Id]; ok && stat != nil {
+			ty.CommentCount = stat.Count                           // 假设 types.Homestay 中有这两个字段
+			ty.CommentAvgScore = math.Round(stat.AvgScore*10) / 10 // 如果没有需要先添加
+		} else {
+			ty.CommentCount = 0
+			ty.CommentAvgScore = 0.0
+		}
+
 		respList = append(respList, ty)
 	}
 
@@ -120,4 +141,31 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 			Msg:  "success",
 		},
 	}, nil
+}
+
+// logic 包内定义（或 model 包内定义，但此处按 logic 使用方便）
+type HomestayCommentStats struct {
+	Count    int64   `db:"count"`     // 评价总数
+	AvgScore float64 `db:"avg_score"` // 平均分
+}
+
+func (l *HomestayListLogic) getCommonListById(homestayIdList []int64) (map[int64]*HomestayCommentStats, error) {
+	result := make(map[int64]*HomestayCommentStats)
+	if len(homestayIdList) == 0 {
+		return result, nil
+	}
+
+	statsList, err := l.svcCtx.HomestayCommentModel.FindStatsByHomestayIds(l.ctx, homestayIdList)
+	if err != nil {
+		logx.Errorf("FindStatsByHomestayIds error: %v, ids: %v", err, homestayIdList)
+		return nil, err
+	}
+
+	for _, stat := range statsList {
+		result[stat.HomestayId] = &HomestayCommentStats{
+			Count:    stat.Count,
+			AvgScore: stat.AvgScore,
+		}
+	}
+	return result, nil
 }

@@ -10,7 +10,7 @@ info (
 
 import (
 	"homestay/homestay.api"
-	"homestay/homestayCommon.api"
+	"homestay/homestayComment.api"
 )
 
 // 民宿信息
@@ -40,8 +40,8 @@ service travel {
 	get /homestay/homestay-extra-detail (HomestayDetailReq) returns (HomestayDetailResp)
 
 	@doc "homestay room common list"
-	@handler homestayCommonList
-	get /homestay/homestay-common-list (HomestayCommonListReq) returns (HomestayCommonListResp)
+	@handler homestayCommentList
+	get /homestay/homestay-comment-list (HomestayCommentListReq) returns (HomestayCommentListResp)
 }
 
 @server (
@@ -51,7 +51,7 @@ service travel {
 )
 service travel {
 	@doc "创建评价"
-	@handler homestayCommonCreate
-	post /homestay/create (HomestayCommonCreateReq) returns (HomestayCommonCreateResp)
+	@handler homestayCommentCreate
+	post /homestay/comment/create (HomestayCommentCreateReq) returns (HomestayCommentCreateResp)
 }
 

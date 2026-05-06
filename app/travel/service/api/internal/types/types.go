@@ -42,39 +42,35 @@ type Homestay struct {
 	FoodPrice           float64  `json:"food_price"`            //餐食价格
 	HomestayPrice       float64  `json:"homestay_price"`        //民宿价格
 	MarketHomestayPrice float64  `json:"market_homestay_price"` //民宿市场价格
+	CommentCount        int64    `json:"comment_count"`         // 总评论条数
+	CommentAvgScore     float64  `json:"comment_avg_score"`     // 平均评分
 }
 
-type HomestayCommonCreateReq struct {
-	CleanlinessStar float64 `json:"cleanliness_star",validate:"required"`
-	LocationStar    float64 `json:"location_star",validate:"required"`
-	ServiceStar     float64 `json:"service_star",validate:"required"`
-	ValueStar       float64 `json:"value_star",validate:"required"`
-	Content         string  `json:"content"`
-	HomestayId      string  `json:"homestay_id",validate:"required"`
+type HomestayCommentCreateReq struct {
+	CleanlinessStar float64 `json:"cleanliness_star" validate:"required"`
+	LocationStar    float64 `json:"location_star" validate:"required"`
+	ServiceStar     float64 `json:"service_star" validate:"required"`
+	ValueStar       float64 `json:"value_star" validate:"required"`
+	Content         string  `json:"content" validate:"required,max=100"` // 长度限制 100
+	HomestayId      string  `json:"homestay_id" validate:"required"`
 }
 
-type HomestayCommonCreateResp struct {
+type HomestayCommentCreateResp struct {
 	Code uint32 `json:"code"`
 	Msg  string `json:"msg"`
 }
 
-type HomestayCommonList struct {
-	Content  string `json:"content"`
-	Star     string `json:"star"`
-	UserName string `json:"user_name"`
-}
-
-type HomestayCommonListReq struct {
+type HomestayCommentListReq struct {
 	Id       string `form:"id"`
 	Page     int64  `form:"page,optional"`
 	PageSize int64  `form:"page_size,optional"`
 }
 
-type HomestayCommonListResp struct {
-	List []HomestayCommonResp `json:"list"`
+type HomestayCommentListResp struct {
+	List []HomestayCommentResp `json:"list"`
 }
 
-type HomestayCommonResp struct {
+type HomestayCommentResp struct {
 	Content               string  `json:"content"`
 	AvgStarResult         float64 `json:"avg_star_result"`
 	CleanlinessStarResult float64 `json:"cleanliness_star_result"`
@@ -83,6 +79,12 @@ type HomestayCommonResp struct {
 	ValueStarResult       float64 `json:"value_star_result"`
 	UserName              string  `json:"user_name"`
 	CreateTime            string  `json:"create_time"`
+}
+
+type HomestayCommonList struct {
+	Content  string `json:"content"`
+	Star     string `json:"star"`
+	UserName string `json:"user_name"`
 }
 
 type HomestayDetailReq struct {

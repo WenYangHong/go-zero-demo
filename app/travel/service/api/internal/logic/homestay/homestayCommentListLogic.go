@@ -5,35 +5,37 @@ import (
 	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
+
 	"go-zero-mall/app/travel/service/api/internal/svc"
 	"go-zero-mall/app/travel/service/api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type HomestayCommonListLogic struct {
+type HomestayCommentListLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
 // homestay room common list
-func NewHomestayCommonListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HomestayCommonListLogic {
-	return &HomestayCommonListLogic{
+func NewHomestayCommentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HomestayCommentListLogic {
+	return &HomestayCommentListLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *HomestayCommonListLogic) HomestayCommonList(req *types.HomestayCommonListReq) (resp *types.HomestayCommonListResp, err error) {
+func (l *HomestayCommentListLogic) HomestayCommentList(req *types.HomestayCommentListReq) (resp *types.HomestayCommentListResp, err error) {
 	whereBuilder := l.svcCtx.HomestayCommentModel.SelectBuilder().Where(squirrel.Eq{
 		"homestay_id": req.Id,
 		"del_state":   0,
 	})
 	commonList, err := l.svcCtx.HomestayCommentModel.FindPageListByPage(l.ctx, whereBuilder, req.Page, req.PageSize, "create_time desc")
 	if len(commonList) == 0 {
-		return &types.HomestayCommonListResp{
-			List: []types.HomestayCommonResp{},
+		return &types.HomestayCommentListResp{
+			List: []types.HomestayCommentResp{},
 		}, nil
 	}
 	// 取出所有的userid
@@ -55,9 +57,9 @@ func (l *HomestayCommonListLogic) HomestayCommonList(req *types.HomestayCommonLi
 	for _, v := range userInfo {
 		userIdNameMap[v.Id] = v.Nickname
 	}
-	var list []types.HomestayCommonResp
+	var list []types.HomestayCommentResp
 	for _, v := range commonList {
-		var ty types.HomestayCommonResp
+		var ty types.HomestayCommentResp
 		_ = copier.Copy(&ty, v)
 		ty.AvgStarResult = v.AvgStar
 		ty.CleanlinessStarResult = v.CleanlinessStar
@@ -68,7 +70,7 @@ func (l *HomestayCommonListLogic) HomestayCommonList(req *types.HomestayCommonLi
 		ty.CreateTime = v.CreateTime.Format("2006-01-02 15:04:05")
 		list = append(list, ty)
 	}
-	return &types.HomestayCommonListResp{
+	return &types.HomestayCommentListResp{
 		List: list,
 	}, nil
 }

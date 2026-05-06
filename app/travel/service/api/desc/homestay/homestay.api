@@ -29,6 +29,8 @@ type Homestay {
     FoodPrice float64 `json:"food_price"`                     //餐食价格
     HomestayPrice float64 `json:"homestay_price"`             //民宿价格
     MarketHomestayPrice float64 `json:"market_homestay_price"` //民宿市场价格
+    CommentCount int64 `json:"comment_count"`  // 总评论条数
+    CommentAvgScore float64 `json:"comment_avg_score"` // 平均评分
 }
 
 type HomestayExtra {

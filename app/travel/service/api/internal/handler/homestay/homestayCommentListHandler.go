@@ -9,17 +9,17 @@ import (
 	"go-zero-mall/app/travel/service/api/internal/types"
 )
 
-// 创建评价
-func HomestayCommonHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// homestay room common list
+func HomestayCommentListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.HomestayCommonCreateReq
+		var req types.HomestayCommentListReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := homestay.NewHomestayCommonLogic(r.Context(), svcCtx)
-		resp, err := l.HomestayCommon(&req)
+		l := homestay.NewHomestayCommentListLogic(r.Context(), svcCtx)
+		resp, err := l.HomestayCommentList(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

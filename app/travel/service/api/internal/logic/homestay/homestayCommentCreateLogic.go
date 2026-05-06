@@ -14,22 +14,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type HomestayCommonCreateLogic struct {
+type HomestayCommentCreateLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
 // 创建评价
-func NewHomestayCommonCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HomestayCommonCreateLogic {
-	return &HomestayCommonCreateLogic{
+func NewHomestayCommentCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HomestayCommentCreateLogic {
+	return &HomestayCommentCreateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *HomestayCommonCreateLogic) HomestayCommonCreate(req *types.HomestayCommonCreateReq) (resp *types.HomestayCommonCreateResp, err error) {
+func (l *HomestayCommentCreateLogic) HomestayCommentCreate(req *types.HomestayCommentCreateReq) (resp *types.HomestayCommentCreateResp, err error) {
+	// todo: 2个问题 => 1. content 长度限制问题 2.同一个用户+同一间民宿多次评价
 	// 用户ID
 	userId := ctxdata.GetUidFromCtx(l.ctx)
 	if userId == 0 {
@@ -45,23 +46,23 @@ func (l *HomestayCommonCreateLogic) HomestayCommonCreate(req *types.HomestayComm
 		return nil, xerr.NewErrCode(xerr.REUQEST_PARAM_ERROR)
 	}
 	// 计算平均分数
-	homestayCommon := new(model.HomestayComment)
-	homestayCommon.AvgStar = (req.ServiceStar + req.LocationStar + req.CleanlinessStar + req.ValueStar) / 4
-	homestayCommon.ServiceStar = req.ServiceStar
-	homestayCommon.LocationStar = req.LocationStar
-	homestayCommon.CleanlinessStar = req.CleanlinessStar
-	homestayCommon.ValueStar = req.ValueStar
-	homestayCommon.Content = req.Content
-	homestayCommon.UserId = userId
-	homestayCommon.HomestayId = homestayId
+	homestayComment := new(model.HomestayComment)
+	homestayComment.AvgStar = (req.ServiceStar + req.LocationStar + req.CleanlinessStar + req.ValueStar) / 4
+	homestayComment.ServiceStar = req.ServiceStar
+	homestayComment.LocationStar = req.LocationStar
+	homestayComment.CleanlinessStar = req.CleanlinessStar
+	homestayComment.ValueStar = req.ValueStar
+	homestayComment.Content = req.Content
+	homestayComment.UserId = userId
+	homestayComment.HomestayId = homestayId
 	err = l.svcCtx.HomestayCommentModel.Trans(l.ctx, func(context context.Context, session sqlx.Session) error {
-		l.svcCtx.HomestayCommentModel.Insert(l.ctx, session, homestayCommon)
+		l.svcCtx.HomestayCommentModel.Insert(l.ctx, session, homestayComment)
 		return nil
 	})
 	if err != nil {
 		return nil, xerr.NewErrCode(xerr.COMMENT_CREATE_FAIL)
 	}
-	return &types.HomestayCommonCreateResp{
+	return &types.HomestayCommentCreateResp{
 		Code: xerr.OK,
 		Msg:  "评价创建成功",
 	}, nil
