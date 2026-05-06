@@ -1,0 +1,21 @@
+syntax = "v1"
+
+info (
+	title:   "公共服务"
+	desc:    "公共服务"
+	author:  "hwy"
+	email:   "13858126467@163.com"
+	version: "v1"
+)
+
+service upload-api {
+	@handler UploadFile
+	post /upload/file returns (UploadResp)
+}
+
+type UploadResp {
+	Filename string `json:"filename"`
+	Size     int64  `json:"size"`
+	URL      string `json:"url"`
+}
+
