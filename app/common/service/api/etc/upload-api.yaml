@@ -1,5 +1,14 @@
 Name: upload-api
 Host: 0.0.0.0
 Port: 8888
-
+# 请求体最大 64 MB
+MaxBytes: 67108864
 UploadDir: ./uploads
+# 文件存储方式  local OR s3
+FileUploadType: local
+
+S3Config:
+  Region:
+  Bucket:
+  Endpoint:
+  CloudFront:

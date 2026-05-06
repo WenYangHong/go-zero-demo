@@ -37,11 +37,21 @@ func UploadFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		file.Seek(0, io.SeekStart)
 
 		l := logic.NewUploadFileLogic(r.Context(), svcCtx)
-		resp, err := l.UploadFile(file, header)
-		if err != nil {
-			httpx.Error(w, err)
-			return
+		if svcCtx.Config.FileUploadType == "local" {
+			resp, err := l.UploadFile(file, header)
+			if err != nil {
+				httpx.Error(w, err)
+				return
+			}
+			httpx.OkJson(w, resp)
+		} else {
+			resp, err := l.UploadFileS3(file, header)
+			if err != nil {
+				httpx.Error(w, err)
+				return
+			}
+			httpx.OkJson(w, resp)
 		}
-		httpx.OkJson(w, resp)
+
 	}
 }

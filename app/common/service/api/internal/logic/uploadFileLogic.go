@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"go-zero-mall/pkg/xerr"
-	"io"
 	"mime/multipart"
 	"os"
 	"path/filepath"
@@ -47,14 +46,32 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 	}
 	defer dst.Close()
 
-	size, err := io.Copy(dst, file)
-	if err != nil {
-		return nil, err
-	}
+	// size, err := io.Copy(dst, file)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return &types.UploadResp{
-		Filename: header.Filename,
-		Size:     size,
-		URL:      "/files/" + safeFilename,
+		URL: "/files/" + safeFilename,
 	}, nil
+}
+
+func (l *UploadFileLogic) UploadFileS3(file multipart.File, header *multipart.FileHeader) (*types.UploadResp, error) {
+	fmt.Println("uploadToS3")
+	return &types.UploadResp{
+		URL: "测试代码",
+	}, nil
+	// // 安全处理文件名，防路径穿越
+	// safeFilename := fmt.Sprintf("%d_%s", time.Now().UnixNano(),
+	// 	filepath.Base(filepath.Clean(header.Filename)))
+	// url, err := l.svcCtx.S3.UploadFile(l.ctx, file, header.Size, safeFilename)
+	// if err != nil {
+	// 	logx.Errorf("upload file to S3 failed: %v", err)
+	// 	return &types.UploadResp{
+	// 		URL: "",
+	// 	}, errors.New("failed to upload file")
+	// }
+	// return &types.UploadResp{
+	// 	URL: url, // 这里还不是正确的
+	// }, nil
 }
