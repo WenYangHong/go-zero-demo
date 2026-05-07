@@ -1,0 +1,22 @@
+syntax = "v1"
+
+info(
+    title: "订单服务"
+    desc: "订单服务"
+    author: "hwy"
+    email: "13858126467@163.com"
+    version: "v1"
+)
+
+type CreateHomestayOrderReq {
+    HomestayId      string `json:"homestay_id" validate:"required"`
+    PeopleNum       int64 `json:"people_num" validate:"required"`
+    IsFood          int64 `json:"IsFood"  validate:"required"`
+    LiveStartTime   int64 `json:"liveStartTime" validate:"required"`
+    LiveEndTime     int64 `json:"liveEndTime" validate:"required"`
+    Remark          string `json:"remark"`
+}
+
+type HomestayOrderInfoResp {
+    Sn string `json:"sn"` // 订单号
+}

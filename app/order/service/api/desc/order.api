@@ -1,0 +1,25 @@
+syntax = "v1"
+
+info (
+    title:   "订单服务"
+    desc:    "订单服务"
+    author:  "hwy"
+    email:   "13858126467@163.com"
+    version: "v1"
+)
+import (
+    "order/order.api"
+)
+// 订单信息
+@server (
+    prefix: order/v1
+    group:  order
+    jwt:    JwtAuth
+)
+
+
+service order {
+    @doc "创建民宿订单"
+    @handler createHomestayOrder
+    post /order/create (CreateHomestayOrderReq) returns (HomestayOrderInfoResp)
+}
