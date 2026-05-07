@@ -28,6 +28,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: homestay.GuessListHandler(serverCtx),
 			},
 			{
+				// 根据民宿ID查询：房东信息
+				Method:  http.MethodGet,
+				Path:    "/homestay/homestay-bussiness-info/with-homestay-id",
+				Handler: homestay.HomestayBusinessInfoWithHomeStayIdHandler(serverCtx),
+			},
+			{
+				// 根据房东信息ID查询：房东信息
+				Method:  http.MethodGet,
+				Path:    "/homestay/homestay-bussiness-info/with-id",
+				Handler: homestay.HomestayBusinessInfoWithIdHandler(serverCtx),
+			},
+			{
 				// homestay room common list
 				Method:  http.MethodGet,
 				Path:    "/homestay/homestay-comment-list",

@@ -11,6 +11,7 @@ info (
 import (
 	"homestay/homestay.api"
 	"homestay/homestayComment.api"
+	"homestay/homestayBusiness.api"
 )
 
 // 民宿信息
@@ -42,6 +43,14 @@ service travel {
 	@doc "homestay room common list"
 	@handler homestayCommentList
 	get /homestay/homestay-comment-list (HomestayCommentListReq) returns (HomestayCommentListResp)
+
+	@doc "根据民宿ID查询：房东信息"
+	@handler homestayBusinessInfoWithHomeStayId
+	get /homestay/homestay-bussiness-info/with-homestay-id (HomestayBusinessInfoWithHomeStayIdReq) returns (HomestayBusinessInfoResp)
+
+	@doc "根据房东信息ID查询：房东信息"
+	@handler homestayBusinessInfoWithId
+	get /homestay/homestay-bussiness-info/with-id (HomestayBusinessInfoWithIdReq) returns (HomestayBusinessInfoResp)
 }
 
 @server (
@@ -52,6 +61,6 @@ service travel {
 service travel {
 	@doc "创建评价"
 	@handler homestayCommentCreate
-	post /homestay/comment/create (HomestayCommentCreateReq) returns (HomestayCommentCreateResp)
+	post /homestay/comment/create (HomestayCommentCreateReq) returns (HomestayBusinessInfoResp)
 }
 

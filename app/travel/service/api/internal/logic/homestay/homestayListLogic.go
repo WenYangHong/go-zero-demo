@@ -53,6 +53,13 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 	if req.SearchKey != "" {
 		whereBuilder = whereBuilder.Where(squirrel.Like{"title": req.SearchKey + "%"})
 	}
+	// 根据房东的 user_id 查询属于他的民宿
+	if req.HomestayBossId != "" {
+		userId, _ := strconv.ParseInt(req.HomestayBossId, 10, 64)
+		whereBuilder = whereBuilder.Where(squirrel.Eq{
+			"user_id": userId,
+		})
+	}
 	// 热门分类
 	if req.HomestayCate != "" {
 		// 不做二次验证了

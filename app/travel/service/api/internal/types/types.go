@@ -46,6 +46,31 @@ type Homestay struct {
 	CommentAvgScore     float64  `json:"comment_avg_score"`     // 平均评分
 }
 
+type HomestayBusiness struct {
+	Id        string  `json:"id"`
+	Title     string  `json:"title"`
+	Info      string  `json:"info"`
+	BossInfo  string  `json:"boss_info"`
+	Tag       string  `json:"tag"`
+	Star      float64 `json:"star"`      // 评分
+	Cover     string  `json:"cover"`     // 房东信息封面
+	HeaderImg string  `json:"header_img` // 房东缩略照片
+}
+
+type HomestayBusinessInfoResp struct {
+	Code uint32           `json:"code"`
+	Msg  string           `json:"msg"`
+	Info HomestayBusiness `json:"data"`
+}
+
+type HomestayBusinessInfoWithHomeStayIdReq struct {
+	HomestayId string `form:"homestay_id" validate:"required"`
+}
+
+type HomestayBusinessInfoWithIdReq struct {
+	Id string `form:"id" validate:"required"`
+}
+
 type HomestayCommentCreateReq struct {
 	CleanlinessStar float64 `json:"cleanliness_star" validate:"required"`
 	LocationStar    float64 `json:"location_star" validate:"required"`
@@ -128,6 +153,7 @@ type HomestayListReq struct {
 	PeopleNum            int64  `json:"people_num,optional"` // 注意首字母大写
 	HomestayCate         string `json:"homestay_cate,optional"`
 	HomestayActivityType string `json:"homestay_activity_type,optional"`
+	HomestayBossId       string `json:"homestay_boss_id,optional"` // 民宿房东的userid
 }
 
 type HomestayListResp struct {

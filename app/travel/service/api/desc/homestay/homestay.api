@@ -20,17 +20,17 @@ type Homestay {
     Banner string `json:"banner"`
     Info string `json:"info"`
     Tag string `json:"tag"`
-    PeopleNum int64 `json:"people_num"`                       //容纳人的数量
+    PeopleNum int64 `json:"people_num"`                        //容纳人的数量
     HomestayBusinessId int64 `json:"homestay_business_id"`     //店铺id
-    UserId int64 `json:"user_id"`                             //房东id
-    RowState int64 `json:"row_state"`                         //0:下架 1:上架
-    RowType int64 `json:"row_type"`                           //售卖类型0：按房间出售 1:按人次出售
-    FoodInfo string `json:"food_info"`                        //餐食标准
-    FoodPrice float64 `json:"food_price"`                     //餐食价格
-    HomestayPrice float64 `json:"homestay_price"`             //民宿价格
+    UserId int64 `json:"user_id"`                              //房东id
+    RowState int64 `json:"row_state"`                          //0:下架 1:上架
+    RowType int64 `json:"row_type"`                            //售卖类型0：按房间出售 1:按人次出售
+    FoodInfo string `json:"food_info"`                         //餐食标准
+    FoodPrice float64 `json:"food_price"`                      //餐食价格
+    HomestayPrice float64 `json:"homestay_price"`              //民宿价格
     MarketHomestayPrice float64 `json:"market_homestay_price"` //民宿市场价格
-    CommentCount int64 `json:"comment_count"`  // 总评论条数
-    CommentAvgScore float64 `json:"comment_avg_score"` // 平均评分
+    CommentCount int64 `json:"comment_count"`                  // 总评论条数
+    CommentAvgScore float64 `json:"comment_avg_score"`         // 平均评分
 }
 
 type HomestayExtra {
@@ -69,6 +69,7 @@ type (
         PeopleNum int64 `json:"people_num,optional"`          // 注意首字母大写
         HomestayCate string `json:"homestay_cate,optional"`
         HomestayActivityType string `json:"homestay_activity_type,optional"`
+        HomestayBossId string `json:"homestay_boss_id,optional"` // 民宿房东的userid
     }
     HomestayListResp {
         List []Homestay `json:"list"`

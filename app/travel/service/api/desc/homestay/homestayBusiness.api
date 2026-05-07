@@ -1,0 +1,35 @@
+syntax = "v1"
+
+info(
+    title: "民宿服务"
+    desc: "民宿服务"
+    author: "hwy"
+    email: "13858126467@163.com"
+    version: "v1"
+)
+
+type HomestayBusiness {
+    Id string `json:"id"`
+    Title string `json:"title"`
+    Info string `json:"info"`
+    BossInfo string `json:"boss_info"`
+    Tag string `json:"tag"`
+    Star float64 `json:"star"`                              // 评分
+    Cover string `json:"cover"`               // 房东信息封面
+    HeaderImg string `json:"header_img`                  // 房东缩略照片
+}
+
+type (
+    HomestayBusinessInfoWithHomeStayIdReq {
+        HomestayId string `form:"homestay_id" validate:"required"`
+    }
+
+    HomestayBusinessInfoWithIdReq {
+        Id string `form:"id" validate:"required"`
+    }
+    HomestayBusinessInfoResp {
+        Code uint32 `json:"code"`
+        Msg string `json:"msg"`
+        Info HomestayBusiness `json:"data"`
+    }
+)
