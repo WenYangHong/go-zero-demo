@@ -33,13 +33,21 @@ func (l *HomestayDetailLogic) HomestayDetail(req *types.HomestayDetailReq) (resp
 	if err != nil {
 		return nil, xerr.NewErrCode(xerr.REUQEST_PARAM_ERROR)
 	}
+	var ty types.Homestay
 
 	homestayDetail, err := l.svcCtx.HomestayModel.FindOne(l.ctx, id)
 	if err != nil {
-		return nil, err
+		return &types.HomestayDetailResp{
+			Homestay: ty,
+			CommonResp: types.CommonResp{
+				Code: xerr.HOMESTAY_DETAIL_FAIL,
+				Msg:  "success",
+			},
+		}, nil
 	}
-
-	var ty types.Homestay
+	if homestayDetail == nil {
+		return &types.HomestayDetailResp{}, nil
+	}
 	_ = copier.Copy(&ty, homestayDetail)
 	ty.Id = strconv.FormatInt(homestayDetail.Id, 10)
 	ty.HomestayBusinessId = homestayDetail.HomestayBusinessId

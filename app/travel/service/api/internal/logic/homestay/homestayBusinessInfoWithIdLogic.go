@@ -38,6 +38,7 @@ func (l *HomestayBusinessInfoWithIdLogic) HomestayBusinessInfoWithId(req *types.
 	}
 	var homestayBusinessResp types.HomestayBusiness
 	_ = copier.Copy(&homestayBusinessResp, homestayBusiness)
+	homestayBusinessResp.Id = strconv.FormatInt(homestayBusiness.Id, 10)
 	return &types.HomestayBusinessInfoResp{
 		Code: xerr.OK,
 		Msg:  "success",
