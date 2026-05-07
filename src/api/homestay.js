@@ -4,8 +4,20 @@ export function getHomestayList(params) {
   return request.post('/travel/v1/homestay/homestayList', params)
 }
 
-export function getHomestayDetail(id) {
-  return request.get(`/homestay/detail/${id}`)
+export function getHomestayDetail(params) {
+  return request.get(`/travel/v1/homestay/homestay-detail`,{params})
+}
+
+export function getHomestayBossWithHomestayId(params) {
+  return request.get(`/travel/v1/homestay/homestay-bussiness-info/with-homestay-id`,{params})
+}
+
+export function getHomestayBossWithId(params) {
+  return request.get(`/travel/v1/homestay/homestay-bussiness-info/with-id`,{params})
+}
+
+export function getHomestayCommentList(params) {
+  return request.get(`/travel/v1/homestay/homestay-comment-list`,{params})
 }
 
 export function searchHomestay(params) {

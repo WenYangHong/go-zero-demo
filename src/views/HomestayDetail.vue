@@ -110,24 +110,51 @@
       </div>
     </template>
 
+    <template v-else-if="isEmpty">
+      <div class="flex flex-col items-center justify-center py-24">
+        <div class="w-32 h-32 bg-surface-container rounded-3xl flex items-center justify-center mb-8">
+          <el-icon :size="64" class="text-on-surface-variant/30"><HomeFilled /></el-icon>
+        </div>
+        <h2 class="text-xl font-bold text-on-surface mb-2">民宿已下架或不存在</h2>
+        <p class="text-on-surface-variant mb-8">该民宿可能已被房东下架，或链接地址有误</p>
+        <div class="flex gap-3">
+          <el-button @click="router.back()">
+            <el-icon class="mr-2"><ArrowLeft /></el-icon>
+            返回上一页
+          </el-button>
+          <el-button type="primary" @click="router.push('/')">
+            <el-icon class="mr-2"><HomeFilled /></el-icon>
+            回到首页
+          </el-button>
+        </div>
+      </div>
+    </template>
+
     <template v-else>
       <div class="grid grid-cols-4 gap-3 mb-8">
-        <div class="col-span-4 md:col-span-2 row-span-2">
-          <img
-            :src="homestay.images[0]"
-            alt="民宿主图"
-            class="w-full h-full object-cover rounded-xl"
-            @error="handleImgError"
-          />
-        </div>
-        <div v-for="(img, idx) in homestay.images.slice(1, 5)" :key="idx">
-          <img
-            :src="img"
-            :alt="`民宿图片${idx + 2}`"
-            class="w-full h-full object-cover rounded-xl"
-            @error="handleImgError"
-          />
-        </div>
+        <template v-if="homestay.images.length > 0">
+          <div class="col-span-4 md:col-span-2 row-span-2">
+            <img
+              :src="homestay.images[0]"
+              alt="民宿主图"
+              class="w-full h-full object-cover rounded-xl"
+              @error="handleImgError"
+            />
+          </div>
+          <div v-for="(img, idx) in homestay.images.slice(1, 5)" :key="idx">
+            <img
+              :src="img"
+              :alt="`民宿图片${idx + 2}`"
+              class="w-full h-full object-cover rounded-xl"
+              @error="handleImgError"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <div class="col-span-4 bg-surface-container rounded-xl flex items-center justify-center" style="height: 280px;">
+            <span class="text-on-surface-variant">暂无图片</span>
+          </div>
+        </template>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -139,32 +166,35 @@
                 <span class="px-3 py-1 bg-surface-container text-on-surface-variant text-sm rounded-full">可住{{ homestay.capacity }}人</span>
               </div>
               <h1 class="text-2xl font-bold text-on-surface mb-2">{{ homestay.title }}</h1>
-              <p class="text-on-surface-variant">{{ homestay.subtitle }}</p>
+              <p v-if="homestay.subtitle" class="text-on-surface-variant">{{ homestay.subtitle }}</p>
             </div>
+            <span class="flex items-center gap-1 text-sm text-on-surface-variant">
+              <span class="text-primary font-bold line-through">¥{{ homestay.marketPrice }}</span>
+            </span>
           </div>
 
           <div class="flex items-center gap-6 py-4 border-y border-outline-variant/30 mb-6">
             <div class="flex items-center gap-2">
               <el-icon class="text-warning" :size="20"><StarFilled /></el-icon>
-              <span class="font-semibold">{{ homestay.rating }}</span>
+              <span class="font-semibold">{{ homestay.rating || '暂无' }}</span>
               <span class="text-on-surface-variant">({{ homestay.reviewCount }}条评价)</span>
             </div>
-            <div class="flex items-center gap-2">
+            <div v-if="homestay.location" class="flex items-center gap-2">
               <el-icon class="text-primary" :size="20"><Location /></el-icon>
               <span class="text-on-surface-variant">{{ homestay.location }}</span>
             </div>
           </div>
 
-          <div class="bg-surface rounded-xl p-5 shadow-card mb-6">
+          <div v-if="boss.name" class="bg-surface rounded-xl p-5 shadow-card mb-6">
             <div class="flex items-center gap-4">
-              <el-avatar :size="56" class="bg-primary/10 text-primary text-lg font-bold">
-                {{ homestay.host.name.charAt(0) }}
+              <el-avatar :size="56" :src="boss.avatar" class="bg-primary/10 text-primary text-lg font-bold">
+                {{ boss.name.charAt(0) }}
               </el-avatar>
               <div class="flex-1">
-                <h3 class="font-semibold text-on-surface">房东：{{ homestay.host.name }}</h3>
-                <p class="text-sm text-on-surface-variant">{{ homestay.host.badge }}</p>
+                <h3 class="font-semibold text-on-surface">房东：{{ boss.name }}</h3>
+                <p class="text-sm text-on-surface-variant">{{ boss.info }}</p>
               </div>
-              <router-link :to="`/business/${homestay.host.id}`" class="text-primary text-sm font-medium hover:underline">
+              <router-link :to="`/business/${boss.id}`" class="text-primary text-sm font-medium hover:underline">
                 查看主页
               </router-link>
             </div>
@@ -205,8 +235,8 @@
                 查看全部
               </router-link>
             </div>
-            <div class="space-y-4">
-              <div v-for="review in homestay.reviews" :key="review.id" class="bg-surface rounded-xl p-5 shadow-card">
+            <div v-if="comments.length > 0" class="space-y-4">
+              <div v-for="review in comments" :key="review.id" class="bg-surface rounded-xl p-5 shadow-card">
                 <div class="flex items-start gap-4">
                   <el-avatar :size="40" class="bg-primary/10 text-primary font-bold shrink-0">
                     {{ review.author.charAt(0) }}
@@ -221,6 +251,9 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div v-else class="bg-surface rounded-xl p-10 shadow-card text-center text-on-surface-variant">
+              暂无评价，成为第一个评价的人吧
             </div>
           </div>
         </div>
@@ -262,10 +295,12 @@
               <div>
                 <label class="block text-xs text-on-surface-variant mb-1">人数</label>
                 <el-select v-model="bookingForm.guestCount" size="large" class="w-full">
-                  <el-option label="1人" :value="1" />
-                  <el-option label="2人" :value="2" />
-                  <el-option label="3人" :value="3" />
-                  <el-option label="4人" :value="4" />
+                  <el-option
+                    v-for="n in homestay.capacity"
+                    :key="n"
+                    :label="`${n}人`"
+                    :value="n"
+                  />
                 </el-select>
               </div>
             </div>
@@ -310,13 +345,16 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
   StarFilled, Location, Connection, Van, IceCreamRound,
-  Sunny, Coffee, Grid, House, KnifeFork
+  Sunny, Coffee, Grid, House, KnifeFork,
+  HomeFilled, ArrowLeft
 } from '@element-plus/icons-vue'
+import { getHomestayDetail, getHomestayBossWithHomestayId, getHomestayCommentList } from '@/api/homestay.js'
 
 const route = useRoute()
 const router = useRouter()
 
-const loading = ref(true)
+const loading = ref(true);
+const isEmpty = ref(false);
 
 const bookingForm = reactive({
   checkIn: '',
@@ -324,64 +362,59 @@ const bookingForm = reactive({
   guestCount: 2,
 })
 
+const DEFAULT_IMAGES = [
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop',
+  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop',
+  'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=300&fit=crop',
+  'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?w=400&h=300&fit=crop',
+]
+
+const DEFAULT_FACILITIES = [
+  { name: '高速WiFi', icon: markRaw(Connection) },
+  { name: '免费停车', icon: markRaw(Van) },
+  { name: '空调', icon: markRaw(IceCreamRound) },
+  { name: '地暖', icon: markRaw(Sunny) },
+  { name: '24小时热水', icon: markRaw(Coffee) },
+  { name: '独立厨房', icon: markRaw(Grid) },
+  { name: '花园庭院', icon: markRaw(House) },
+  { name: '烧烤设备', icon: markRaw(KnifeFork) },
+]
+
+function trim(s) {
+  return (s || '').replace(/^\n+|\n+$/g, '').trim()
+}
+
 const homestay = ref({
-  id: route.params.id || 1,
-  title: '云顶山居·观星木屋',
-  subtitle: '位于海拔1200米的云顶山，拥有绝佳观星视野和山景视野',
-  category: '山景民宿',
-  capacity: 4,
-  rating: 4.9,
-  reviewCount: 128,
-  location: '浙江省·湖州市',
-  price: 688,
-  images: [
-    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?w=400&h=300&fit=crop',
-  ],
-  host: {
-    id: 1,
-    name: '林志远',
-    badge: '已验证 · 超赞房东 · 5年经验',
-  },
-  description: [
-    '这是一栋位于海拔1200米云顶山的独栋木屋，四周环绕着茂密的原始森林。清晨醒来，推开窗户，云海就在脚下流动；夜幕降临，满天繁星仿佛触手可及。',
-    '房屋建筑面积约120平米，两室一厅一厨一卫，可入住4人。配备独立厨房、空调、地暖、24小时热水。院子里有观星平台、BBQ区域，还有一个小型的山泉水游泳池。',
-  ],
-  facilities: [
-    { name: '高速WiFi', icon: markRaw(Connection) },
-    { name: '免费停车', icon: markRaw(Van) },
-    { name: '空调', icon: markRaw(IceCreamRound) },
-    { name: '地暖', icon: markRaw(Sunny) },
-    { name: '24小时热水', icon: markRaw(Coffee) },
-    { name: '独立厨房', icon: markRaw(Grid) },
-    { name: '花园庭院', icon: markRaw(House) },
-    { name: '烧烤设备', icon: markRaw(KnifeFork) },
-  ],
+  id: '',
+  title: '',
+  subtitle: '',
+  category: '精品民宿',
+  capacity: 0,
+  rating: 0,
+  reviewCount: 0,
+  location: '',
+  price: 0,
+  marketPrice: 0,
+  images: [],
+  description: [],
+  facilities: [...DEFAULT_FACILITIES],
   meal: {
-    name: '早餐套餐',
-    price: 68,
-    description: '包含：土鸡蛋、鲜牛奶、手工馒头、山区野菜、时令水果',
+    name: '暂无餐食',
+    price: 0,
+    description: '',
   },
-  reviews: [
-    {
-      id: 1,
-      author: '陈小明',
-      rating: 5,
-      content: '非常棒的体验！木屋很温馨，设施齐全。最惊喜的是晚上真的可以看到满天星星，房东准备的早餐也很丰富。下次还会再来！',
-      date: '2024年3月入住',
-    },
-    {
-      id: 2,
-      author: '王丽华',
-      rating: 5,
-      content: '带家人一起过来的，老人和孩子都很喜欢。山里的空气特别好，木屋的隔音也不错。晚上一起在院子里看星星，孩子特别开心！',
-      date: '2024年2月入住',
-    },
-  ],
 })
+
+const boss = ref({
+  id: '',
+  name: '',
+  info: '',
+  cover: '',
+  avatar: '',
+})
+
+const comments = ref([])
 
 const nights = computed(() => {
   if (!bookingForm.checkIn || !bookingForm.checkOut) return 1
@@ -390,7 +423,10 @@ const nights = computed(() => {
   return days > 0 ? days : 1
 })
 
-const totalPrice = computed(() => homestay.value.price * nights.value + 50 + 68)
+const totalPrice = computed(() => {
+  const price = homestay.value.price || 0
+  return price * nights.value + 50 + 68
+})
 
 function disablePastDate(date) {
   return date.getTime() < Date.now() - 86400000
@@ -419,10 +455,92 @@ function handleImgError(e) {
   )
 }
 
-onMounted(() => {
-  setTimeout(() => {
+async function fetchHomestayDetail() {
+  const res = await getHomestayDetail({ id: route.params.id })
+
+  if (res.code === 200002) {
+    isEmpty.value = true
+    return
+  }
+
+  const h = res.homestay
+  const images = h.img_info && h.img_info.length > 0 ? h.img_info : DEFAULT_IMAGES
+
+  homestay.value = {
+    id: h.id,
+    title: trim(h.title),
+    subtitle: trim(h.sub_title),
+    category: trim(h.tag) || '精品民宿',
+    capacity: h.people_num || 0,
+    rating: h.comment_avg_score || 0,
+    reviewCount: h.comment_count || 0,
+    location: '',
+    price: h.homestay_price || 0,
+    marketPrice: h.market_homestay_price || 0,
+    images,
+    description: trim(h.info)
+      .split('\n\n')
+      .map(p => p.trim())
+      .filter(Boolean),
+    facilities: [...DEFAULT_FACILITIES],
+    meal: {
+      name: trim(h.food_info) || '暂无餐食',
+      price: h.food_price || 0,
+      description: trim(h.food_info) || '',
+    },
+  }
+
+  if (homestay.value.capacity > 0) {
+    bookingForm.guestCount = Math.min(2, homestay.value.capacity)
+  }
+}
+
+async function fetchBoss() {
+  try {
+    const res = await getHomestayBossWithHomestayId({ homestay_id: route.params.id })
+    boss.value = {
+      id: res.id,
+      name: trim(res.title),
+      info: trim(res.boss_info),
+      cover: res.cover,
+      avatar: res.HeaderImg,
+    }
+  } catch {
+    boss.value = { id: '', name: '', info: '', cover: '', avatar: '' }
+  }
+}
+
+async function fetchComments() {
+  try {
+    const res = await getHomestayCommentList({
+      id: route.params.id,
+      page: 1,
+      page_size: 2,
+    })
+    comments.value = (res.list || []).map((item, index) => ({
+      id: index,
+      author: item.user_name,
+      rating: item.avg_star_result,
+      content: item.content,
+      date: item.create_time,
+    }))
+  } catch {
+    comments.value = []
+  }
+}
+
+onMounted(async () => {
+  try {
+    await fetchHomestayDetail()
+    if (!isEmpty.value) {
+      await Promise.all([
+        fetchBoss(),
+        fetchComments(),
+      ])
+    }
+  } finally {
     loading.value = false
-  }, 3000)
+  }
 })
 </script>
 
