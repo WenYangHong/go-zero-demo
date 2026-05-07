@@ -2,6 +2,7 @@ package homestay
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"go-zero-mall/app/travel/service/api/internal/svc"
@@ -43,7 +44,15 @@ func (l *HomestayDetailLogic) HomestayDetail(req *types.HomestayDetailReq) (resp
 	ty.Id = strconv.FormatInt(homestayDetail.Id, 10)
 	ty.HomestayBusinessId = homestayDetail.HomestayBusinessId
 	ty.UserId = homestayDetail.UserId
-
+	// 民宿图片
+	img_info_list := []string{}
+	if homestayDetail.ImgInfo != "" || string(homestayDetail.ImgInfo) != "" {
+		err := json.Unmarshal([]byte(homestayDetail.ImgInfo), &img_info_list)
+		if err != nil {
+			img_info_list = []string{}
+		}
+	}
+	ty.ImgInfo = img_info_list
 	return &types.HomestayDetailResp{
 		Homestay: ty,
 		CommonResp: types.CommonResp{
