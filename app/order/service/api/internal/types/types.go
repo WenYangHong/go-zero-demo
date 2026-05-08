@@ -13,7 +13,9 @@ type CreateHomestayOrderReq struct {
 }
 
 type HomestayOrderInfoResp struct {
-	Sn string `json:"sn"` // 订单号
+	Sn   string `json:"sn"` // 订单号
+	Code int64  `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 type UserHomestayOrderDetailReq struct {

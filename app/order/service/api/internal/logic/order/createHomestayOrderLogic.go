@@ -50,6 +50,8 @@ func (l *CreateHomestayOrderLogic) CreateHomestayOrder(req *types.CreateHomestay
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ORDER_CREATE_FAIL), "rpc CreateHomestayOrder err: %v", err)
 	}
 	return &types.HomestayOrderInfoResp{
-		Sn: homestayOrder.Sn,
+		Sn:   homestayOrder.Sn,
+		Code: int64(xerr.OK),
+		Msg:  xerr.MapErrMsg(xerr.OK),
 	}, nil
 }

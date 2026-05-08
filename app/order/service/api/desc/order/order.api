@@ -19,6 +19,8 @@ type (
 
      HomestayOrderInfoResp {
         Sn string `json:"sn"` // 订单号
+        Code int64 `json:"code"`
+        Msg string `json:"msg"`
     }
 )
 
