@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	model2 "go-zero-mall/app/order/service/model"
 	"go-zero-mall/app/travel/service/model"
 	"go-zero-mall/pkg/mq"
@@ -35,8 +36,8 @@ func NewCreateHomestayOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *CreateHomestayOrderLogic) CreateHomestayOrder(in *pb.CreateHomestayOrderReq) (*pb.CreateHomestayOrderResp, error) {
 	// 民宿信息 - look使用 rpc 我这里使用 model，确实发现了问题
 	homestay, _ := l.svcCtx.HomestayModel.FindOne(l.ctx, in.HomestayId)
-
 	valid, err := l.orderParamsValid(in, homestay)
+
 	if !valid || err != nil {
 		return nil, err
 	}
@@ -89,6 +90,8 @@ func (l *CreateHomestayOrderLogic) CreateHomestayOrder(in *pb.CreateHomestayOrde
 }
 
 func (l *CreateHomestayOrderLogic) orderParamsValid(in *pb.CreateHomestayOrderReq, homestay *model.Homestay) (bool, error) {
+	fmt.Println(" -- orderQuery")
+
 	// 获取登录用户信息
 	if in.UserId == 0 {
 		// 用户未登录
@@ -116,5 +119,13 @@ func (l *CreateHomestayOrderLogic) orderParamsValid(in *pb.CreateHomestayOrderRe
 		return false, xerr.NewErrCode(xerr.ORDER_LIVE_PEOPLE_NUM_ERROR)
 	}
 	// 根据 homestayId + liveStartTime + liveEndTime + trade_state = [0,1] 查询该时间段内是否有订单
+	hasOrder, hasOrderError := l.svcCtx.HomestayOrderModel.FindOneByHomestayIdLiveTimeTradeState(l.ctx, in.UserId, in.HomestayId, in.LiveStartTime, in.LiveEndTime, []int64{model2.HomestayOrderTradeStateWaitPay, model2.HomestayOrderTradeStateWaitUse})
+	if hasOrderError != nil {
+		return false, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "Order Database Exception order : %+v , err: %v", in, hasOrderError)
+	}
+	if hasOrder {
+		// 订单已存在
+		return false, xerr.NewErrCode(xerr.ORDER_EXIST_ERROR)
+	}
 	return true, nil
 }

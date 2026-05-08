@@ -24,8 +24,7 @@ func InitOrderDelayQueue() error {
 	args := amqp.Table{
 		"x-dead-letter-exchange":    "",
 		"x-dead-letter-routing-key": "order.release.queue",
-		"x-message-ttl":             180000, //  test: 3分钟
-		// "x-message-ttl":             1800000, // 30分钟
+		"x-message-ttl":             180000, // test 3分钟
 	}
 
 	_, err = Channel.QueueDeclare(
