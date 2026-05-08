@@ -29,7 +29,7 @@ export function getHomestayByCategory(category) {
 }
 
 export function createBooking(data) {
-  return request.post('/homestay/booking', data)
+  return request.post('/order/v1/order/create', data)
 }
 
 export function getCategories() {

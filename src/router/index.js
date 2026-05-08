@@ -29,6 +29,12 @@ const routes = [
         component: () => import('@/views/Comment.vue'),
         meta: { title: '评价' },
       },
+      {
+        path: 'order/:sn',
+        name: 'OrderPay',
+        component: () => import('@/views/OrderPay.vue'),
+        meta: { title: '订单支付' },
+      },
     ],
   },
   {

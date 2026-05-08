@@ -231,7 +231,7 @@
           <div>
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-lg font-bold text-on-surface">用户评价</h2>
-              <router-link :to="`/comment/${homestay.id}`" class="text-primary text-sm font-medium hover:underline">
+              <router-link :to="`/comment/${homestay.id}?type=homestay`" class="text-primary text-sm font-medium hover:underline">
                 查看全部
               </router-link>
             </div>
@@ -303,10 +303,16 @@
                   />
                 </el-select>
               </div>
+              <div>
+                <label class="block text-xs text-on-surface-variant mb-1">备注</label>
+                <el-input v-model="bookingForm.remark" size="large" class="w-full">
+
+                </el-input>
+              </div>
             </div>
 
             <div class="flex flex-col gap-3">
-              <el-button type="primary" size="large" class="w-full" @click="handleBook">
+              <el-button type="primary" size="large" class="w-full" :loading="bookingLoading" @click="handleBook">
                 立即预订
               </el-button>
               <el-button size="large" class="w-full contact-house-master-btn" @click="handleContact">
@@ -319,13 +325,9 @@
                 <span class="text-on-surface-variant">¥{{ homestay.price }} x {{ nights }}晚</span>
                 <span>¥{{ homestay.price * nights }}</span>
               </div>
-              <div class="flex justify-between text-sm mb-2">
-                <span class="text-on-surface-variant">清洁费</span>
-                <span>¥50</span>
-              </div>
-              <div class="flex justify-between text-sm mb-2">
-                <span class="text-on-surface-variant">服务费</span>
-                <span>¥68</span>
+              <div class="flex justify-between text-sm mb-2" v-if="homestay.meal.price > 0">
+                <span class="text-on-surface-variant">{{  homestay.meal.name }} x {{ nights }}晚</span>
+                <span>¥{{ homestay.meal.price * nights }}</span>
               </div>
               <div class="flex justify-between font-semibold pt-3 border-t border-outline-variant/30 mt-3">
                 <span>总计</span>
@@ -342,14 +344,13 @@
 <script setup>
 import { ref, reactive, computed, markRaw, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   StarFilled, Location, Connection, Van, IceCreamRound,
   Sunny, Coffee, Grid, House, KnifeFork,
   HomeFilled, ArrowLeft
 } from '@element-plus/icons-vue'
-import { getHomestayDetail, getHomestayBossWithHomestayId, getHomestayCommentList } from '@/api/homestay.js'
-
+import { getHomestayDetail, getHomestayBossWithHomestayId, getHomestayCommentList, createBooking } from '@/api/homestay.js'
 const route = useRoute()
 const router = useRouter()
 
@@ -360,7 +361,10 @@ const bookingForm = reactive({
   checkIn: '',
   checkOut: '',
   guestCount: 2,
+  remark: '',
 })
+
+const bookingLoading = ref(false)
 
 const DEFAULT_IMAGES = [
   'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
@@ -425,7 +429,7 @@ const nights = computed(() => {
 
 const totalPrice = computed(() => {
   const price = homestay.value.price || 0
-  return price * nights.value + 50 + 68
+  return price * nights.value  + homestay.value.meal.price * nights.value
 })
 
 function disablePastDate(date) {
@@ -437,12 +441,78 @@ function disableCheckOutDate(date) {
   return date.getTime() <= new Date(bookingForm.checkIn).getTime()
 }
 
-function handleBook() {
+async function handleBook() {
   if (!bookingForm.checkIn || !bookingForm.checkOut) {
     ElMessage.warning('请选择入住和退房日期')
     return
   }
-  ElMessage.success('预订功能开发中，敬请期待')
+
+  const checkInStr = bookingForm.checkIn
+  const checkOutStr = bookingForm.checkOut
+  const nightCount = nights.value
+  const total = totalPrice.value
+
+  try {
+    await ElMessageBox.confirm(
+      `<div style="line-height: 2;">
+        <div><strong>民宿：</strong>${homestay.value.title}</div>
+        <div><strong>入住：</strong>${checkInStr}</div>
+        <div><strong>退房：</strong>${checkOutStr}（共${nightCount}晚）</div>
+        <div><strong>人数：</strong>${bookingForm.guestCount}人</div>
+        <div v-if="bookingForm.remark"><strong>备注：</strong>${bookingForm.remark || '无'}</div>
+        <div style="margin-top: 8px; font-size: 16px;"><strong>合计：</strong><span style="color: #059669;">¥${total}</span></div>
+      </div>`,
+      '确认预订',
+      {
+        confirmButtonText: '确认预订',
+        cancelButtonText: '再想想',
+        type: 'info',
+        dangerouslyUseHTMLString: true,
+      }
+    )
+  } catch {
+    return
+  }
+
+  bookingLoading.value = true
+  try {
+    const res = await createBooking({
+      homestay_id: homestay.value.id,
+      is_food: homestay.value.meal.price === 0 ? 0 : 1,
+      live_start_time: new Date(bookingForm.checkIn).getTime() / 1000,
+      live_end_time: new Date(bookingForm.checkOut).getTime() / 1000,
+      people_num: bookingForm.guestCount,
+      remark: bookingForm.remark,
+    })
+console.log("res",res)
+    const orderSn = res.sn || ''
+    if (orderSn) {
+      ElMessageBox.alert(
+        '<div style="text-align: center; padding: 16px 0;"><div style="font-size: 48px; margin-bottom: 12px;">🎉</div><div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">预订成功！</div><div style="color: #6B7280;">请在30分钟内完成支付，超时订单将自动取消</div></div>',
+        '预订结果',
+        {
+          confirmButtonText: '去支付',
+          dangerouslyUseHTMLString: true,
+        }
+      ).then(() => {
+        router.push(`/order/${orderSn}`)
+      })
+    } else {
+      ElMessage.success('预订成功')
+      router.push('/')
+    }
+  } catch (err) {
+    ElMessageBox.alert(
+      `<div style="text-align: center; padding: 16px 0;"><div style="font-size: 48px; margin-bottom: 12px;">😔</div><div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">预订失败</div><div style="color: #6B7280;">${err?.message || '网络异常，请稍后重试'}</div></div>`,
+      '预订结果',
+      {
+        confirmButtonText: '重试',
+        dangerouslyUseHTMLString: true,
+      }
+    )
+  } finally {
+    bookingLoading.value = false
+  }
 }
 
 function handleContact() {

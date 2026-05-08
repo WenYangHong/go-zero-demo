@@ -137,7 +137,7 @@
           <section>
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-lg font-bold text-on-surface">评价概览</h2>
-              <router-link :to="`/comment/${business.id}`" class="text-primary text-sm font-medium hover:underline">
+              <router-link :to="`/comment/${business.id}?type=homestayBusiness`" class="text-primary text-sm font-medium hover:underline">
                 查看全部
               </router-link>
             </div>
