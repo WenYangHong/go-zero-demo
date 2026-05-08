@@ -4,6 +4,7 @@ import (
 	"context"
 	model2 "go-zero-mall/app/order/service/model"
 	"go-zero-mall/app/travel/service/model"
+	"go-zero-mall/pkg/mq"
 	"go-zero-mall/pkg/tool"
 	"go-zero-mall/pkg/uniqueid"
 	"go-zero-mall/pkg/xerr"
@@ -77,7 +78,11 @@ func (l *CreateHomestayOrderLogic) CreateHomestayOrder(in *pb.CreateHomestayOrde
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "Order Database Exception order : %+v , err: %v", order, err)
 	}
-	// 创建延迟队列，30分钟后关闭未支付订单
+	// 创建延迟队列，30分钟后关闭未支付订单 - RabbitMQ + 死信队列实现
+	mqErr := mq.PublishDelayOrder(order.Sn)
+	if mqErr != nil {
+		return nil, mqErr
+	}
 	return &pb.CreateHomestayOrderResp{
 		Sn: order.Sn,
 	}, nil

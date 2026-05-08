@@ -1,10 +1,12 @@
 package svc
 
 import (
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	model2 "go-zero-mall/app/order/service/model"
 	"go-zero-mall/app/order/service/rpc/internal/config"
 	"go-zero-mall/app/travel/service/model"
+	"go-zero-mall/pkg/mq"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ServiceContext struct {
@@ -15,9 +17,17 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	sqlConn := sqlx.NewMysql(c.DB.DataSource)
+	// mq
+	mq.InitRabbitMQ()
+	err := mq.InitOrderDelayQueue()
+	if err != nil {
+		return nil
+	}
+	HomestayOrderModel := model2.NewHomestayOrderModel(sqlConn, c.Cache)
+	mq.StartOrderConsumer(HomestayOrderModel)
 	return &ServiceContext{
 		Config:             c,
 		HomestayModel:      model.NewHomestayModel(sqlConn, c.Cache),
-		HomestayOrderModel: model2.NewHomestayOrderModel(sqlConn, c.Cache),
+		HomestayOrderModel: HomestayOrderModel,
 	}
 }
