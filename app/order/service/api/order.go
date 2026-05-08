@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go-zero-mall/app/order/service/api/internal/middleware"
 
 	"go-zero-mall/app/order/service/api/internal/config"
 	"go-zero-mall/app/order/service/api/internal/handler"
@@ -22,7 +23,7 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
-
+	server.Use(middleware.ResponseMiddleware)
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 

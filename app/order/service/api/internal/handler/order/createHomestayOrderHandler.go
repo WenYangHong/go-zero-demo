@@ -1,6 +1,7 @@
 package order
 
 import (
+	"go-zero-mall/app/order/service/api/internal/middleware"
 	"go-zero-mall/pkg/xerr"
 	"net/http"
 
@@ -29,9 +30,9 @@ func CreateHomestayOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := order.NewCreateHomestayOrderLogic(r.Context(), svcCtx)
 		resp, err := l.CreateHomestayOrder(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			middleware.ErrorJson(w, r, http.StatusInternalServerError, "请求失败")
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			middleware.OkJson(w, r, resp)
 		}
 	}
 }
