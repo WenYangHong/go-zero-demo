@@ -1,13 +1,18 @@
 package order
 
 import (
+	"go-zero-mall/pkg/xerr"
 	"net/http"
 
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"go-zero-mall/app/order/service/api/internal/logic/order"
 	"go-zero-mall/app/order/service/api/internal/svc"
 	"go-zero-mall/app/order/service/api/internal/types"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
+
+var validate = validator.New()
 
 // 创建民宿订单
 func CreateHomestayOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -17,7 +22,10 @@ func CreateHomestayOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
-
+		if err := validate.Struct(&req); err != nil {
+			xerr.HandleError(w, r, xerr.NewErrCode(xerr.REUQEST_PARAM_ERROR))
+			return
+		}
 		l := order.NewCreateHomestayOrderLogic(r.Context(), svcCtx)
 		resp, err := l.CreateHomestayOrder(&req)
 		if err != nil {

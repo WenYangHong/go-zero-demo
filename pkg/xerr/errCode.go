@@ -24,3 +24,8 @@ const USER_NOT_FOUND_ERROR = 100106              // 用户信息不存在
 // 民宿模块
 const COMMENT_CREATE_FAIL = 200001  // 民宿评价失败
 const HOMESTAY_DETAIL_FAIL = 200002 // 无民宿详情
+
+// 订单模块
+const ORDER_LIVE_TIME_ERROR = 300001
+const ORDER_LIVE_PEOPLE_NUM_ERROR = 300002
+const ORDER_CREATE_FAIL = 300003

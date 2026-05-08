@@ -3,7 +3,6 @@ package homestay
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"go-zero-mall/app/travel/service/api/internal/svc"
 	"go-zero-mall/app/travel/service/api/internal/types"
 	"go-zero-mall/app/travel/service/model"
@@ -110,7 +109,6 @@ func (l *HomestayListLogic) HomestayList(req *types.HomestayListReq) (resp *type
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("commonMap", commonMap)
 	for _, hs := range homestayList {
 		var ty types.Homestay
 		_ = copier.Copy(&ty, hs)

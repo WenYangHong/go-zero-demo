@@ -6,9 +6,9 @@ package types
 type CreateHomestayOrderReq struct {
 	HomestayId    string `json:"homestay_id" validate:"required"`
 	PeopleNum     int64  `json:"people_num" validate:"required"`
-	IsFood        int64  `json:"IsFood"  validate:"required"`
-	LiveStartTime int64  `json:"liveStartTime" validate:"required"`
-	LiveEndTime   int64  `json:"liveEndTime" validate:"required"`
+	IsFood        int64  `json:"is_food"  validate:"required"`
+	LiveStartTime int64  `json:"live_start_time" validate:"required"`
+	LiveEndTime   int64  `json:"live_end_time" validate:"required"`
 	Remark        string `json:"remark"`
 }
 

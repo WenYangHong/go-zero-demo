@@ -17,6 +17,11 @@ func init() {
 	message[LOGIN_PASSWORD_ERROR] = "密码错误"
 	message[LOGIN_ERROR] = "账号登录失败"
 	message[COMMENT_CREATE_FAIL] = "民宿评价失败"
+	message[ORDER_LIVE_TIME_ERROR] = "订单入住时间错误"
+	message[ORDER_LIVE_PEOPLE_NUM_ERROR] = "订单入住人数错误"
+	message[HOMESTAY_DETAIL_FAIL] = "民宿信息不存在"
+	message[ORDER_CREATE_FAIL] = "订单创建失败"
+	message[USER_NOT_FOUND_ERROR] = "用户不存在或未登录"
 }
 
 func MapErrMsg(errcode uint32) string {
