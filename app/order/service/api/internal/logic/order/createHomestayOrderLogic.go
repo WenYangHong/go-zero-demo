@@ -2,14 +2,15 @@ package order
 
 import (
 	"context"
-	"go-zero-mall/app/order/service/rpc/order"
-	"go-zero-mall/pkg/ctxdata"
-	"go-zero-mall/pkg/xerr"
 	"strconv"
 
 	"go-zero-mall/app/order/service/api/internal/svc"
 	"go-zero-mall/app/order/service/api/internal/types"
+	"go-zero-mall/app/order/service/rpc/order"
+	"go-zero-mall/pkg/ctxdata"
+	"go-zero-mall/pkg/xerr"
 
+	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -46,7 +47,7 @@ func (l *CreateHomestayOrderLogic) CreateHomestayOrder(req *types.CreateHomestay
 		Remark:        req.Remark,
 	})
 	if err != nil {
-		return nil, xerr.NewErrCode(xerr.ORDER_CREATE_FAIL)
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ORDER_CREATE_FAIL), "rpc CreateHomestayOrder err: %v", err)
 	}
 	return &types.HomestayOrderInfoResp{
 		Sn: homestayOrder.Sn,
