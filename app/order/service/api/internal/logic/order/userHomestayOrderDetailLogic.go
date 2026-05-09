@@ -2,10 +2,13 @@ package order
 
 import (
 	"context"
+	"go-zero-mall/app/order/service/rpc/pb"
+	"go-zero-mall/pkg/ctxdata"
 
 	"go-zero-mall/app/order/service/api/internal/svc"
 	"go-zero-mall/app/order/service/api/internal/types"
 
+	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -25,7 +28,19 @@ func NewUserHomestayOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *UserHomestayOrderDetailLogic) UserHomestayOrderDetail(req *types.UserHomestayOrderDetailReq) (resp *types.UserHomestayOrderDetailResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	detail, err := l.svcCtx.OrderRpc.HomestayOrderDetail(l.ctx, &pb.HomestayOrderDetailReq{
+		UserId: userId,
+		Sn:     req.Sn,
+	})
+	if err != nil {
+		return nil, err
+	}
+	var returnDetail types.UserHomestayOrderDetailResp
 
-	return
+	err = copier.Copy(&returnDetail, detail.HomestayOrder)
+	if err != nil {
+		return nil, err
+	}
+	return &returnDetail, nil
 }

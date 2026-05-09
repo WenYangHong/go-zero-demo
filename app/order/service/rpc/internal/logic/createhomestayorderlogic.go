@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	model2 "go-zero-mall/app/order/service/model"
 	"go-zero-mall/app/travel/service/model"
 	"go-zero-mall/pkg/mq"
@@ -90,8 +89,6 @@ func (l *CreateHomestayOrderLogic) CreateHomestayOrder(in *pb.CreateHomestayOrde
 }
 
 func (l *CreateHomestayOrderLogic) orderParamsValid(in *pb.CreateHomestayOrderReq, homestay *model.Homestay) (bool, error) {
-	fmt.Println(" -- orderQuery")
-
 	// 获取登录用户信息
 	if in.UserId == 0 {
 		// 用户未登录

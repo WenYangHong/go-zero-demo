@@ -28,19 +28,20 @@ type (
     UserHomestayOrderListView {
         Sn              string  `json:"sn"`              //单号
         Title           string  `json:"title"`           //标题
-        SubTitle        string  `json:"subTitle"`        //副标题
-        HomestayId      int64   `json:"homestayId"`      //民宿id
+        SubTitle        string  `json:"sub_title"`        //副标题
+        HomestayId      int64   `json:"homestay_id"`      //民宿id
         Cover           string  `json:"cover"`           //封面
-        OrderTotalPrice float64 `json:"orderTotalPrice"` //订单总价格
-        CreateTime      int64   `json:"createTime"`      //下单时间
-        TradeState      int64   `json:"tradeState"`      //-1: 已取消 0:待支付 1:未使用 2:已使用  3:已退款 4:已过期
-        LiveStartDate   int64   `json:"liveStartDate"`   //入驻开始日期
-        LiveEndDate     int64   `json:"liveEndDate"`     //入驻结束日期
-        TradeCode       string  `json:"tradeCode"`       //交易码
+        OrderTotalPrice float64 `json:"order_total_price"` //订单总价格
+        CreateTime      int64   `json:"create_time"`      //下单时间
+        TradeState      int64   `json:"trade_state"`      //-1: 已取消 0:待支付 1:未使用 2:已使用  3:已退款 4:已过期
+        LiveStartDate   int64   `json:"live_start_date"`   //入驻开始日期
+        LiveEndDate     int64   `json:"live_end_date"`     //入驻结束日期
+        TradeCode       string  `json:"trade_code"`       //交易码
     }
     UserHomestayOrderListReq {
         LastId     int64 `json:"lastId"`
         PageSize   int64 `json:"pageSize"`
+        Page        int64 `json:"page"`
         TradeState int64 `json:"tradeState"` //-99:全部 0:代支付订单 1:有效订单
     }
     UserHomestayOrderListResp {
