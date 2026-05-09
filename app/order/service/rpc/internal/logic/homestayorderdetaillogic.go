@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"go-zero-mall/pkg/xerr"
 
 	"go-zero-mall/app/order/service/rpc/internal/svc"
@@ -36,9 +35,7 @@ func (l *HomestayOrderDetailLogic) HomestayOrderDetail(in *pb.HomestayOrderDetai
 		// 订单不存在
 		return nil, xerr.NewErrCode(xerr.ORDER_NOT_EXIST_ERROR)
 	}
-	fmt.Println("detail.UserId != in.UserId", detail.UserId != in.UserId)
-	fmt.Println("detail.UserId", detail.UserId)
-	fmt.Println("detail.in", in.UserId)
+
 	// 判断登录人 和 订单人是否是同一个
 	if detail.UserId != in.UserId {
 		return nil, xerr.NewErrCode(xerr.ORDER_USER_NOT_MATCH_ERROR)

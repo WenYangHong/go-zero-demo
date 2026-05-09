@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go-zero-mall/pkg/xerr"
+	"net/http"
 
 	"go-zero-mall/app/usercenter/service/api/internal/config"
 	"go-zero-mall/app/usercenter/service/api/internal/handler"
@@ -10,6 +12,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 var configFile = flag.String("f", "etc/usercenter.yaml", "the config file")
@@ -20,7 +23,13 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf)
+	server := rest.MustNewServer(c.RestConf, rest.WithNotFoundHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		httpx.WriteJson(w, http.StatusNotFound, map[string]any{
+			"code": xerr.NOT_FOUND,
+			"msg":  "路由不存在",
+			"data": nil,
+		})
+	})))
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)

@@ -22,9 +22,10 @@ func init() {
 	message[HOMESTAY_DETAIL_FAIL] = "民宿信息不存在"
 	message[ORDER_CREATE_FAIL] = "订单创建失败"
 	message[USER_NOT_FOUND_ERROR] = "用户不存在或未登录"
-	message[ORDER_EXIST_ERROR] = " 用户存在相同未使用的订单"
-	message[ORDER_NOT_EXIST_ERROR] = " 订单不存在"
-	message[ORDER_USER_NOT_MATCH_ERROR] = " 无权限查看订单详情"
+	message[ORDER_EXIST_ERROR] = "用户存在相同未使用的订单"
+	message[ORDER_NOT_EXIST_ERROR] = "订单不存在"
+	message[ORDER_USER_NOT_MATCH_ERROR] = "无权查看订单信息"
+
 }
 
 func MapErrMsg(errcode uint32) string {
